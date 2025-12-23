@@ -2,10 +2,16 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import {Dialog,DialogContent,DialogHeader,DialogTitle,} from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Loader2 } from 'lucide-react';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -21,7 +27,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const handleSubmit = async () => {
     const result = await login({ identifier, password });
     setMessage(result.message);
-    
+
     if (result.success) {
       setTimeout(() => {
         onClose();
@@ -34,13 +40,23 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-slate-800 text-white border-slate-700">
+      <DialogContent
+        className="
+          bg-slate-800 text-white border-slate-700
+          animate-in fade-in zoom-in-95 duration-300
+
+          [&>button]:cursor-pointer
+          [&>button]:transition-transform
+          [&>button]:duration-300
+          [&>button:hover]:scale-125
+        "
+      >
         <DialogHeader>
           <DialogTitle className="text-2xl">Login</DialogTitle>
         </DialogHeader>
-        
-        <div className="space-y-4">
-          <div>
+
+        <div className="space-y-5">
+          <div className="space-y-2">
             <Label htmlFor="identifier">Email or Username</Label>
             <Input
               id="identifier"
@@ -50,8 +66,8 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
               className="bg-slate-700 border-slate-600"
             />
           </div>
-          
-          <div>
+
+          <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
             <Input
               id="password"
@@ -64,25 +80,25 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
           </div>
 
           {message && (
-            <p className={`text-sm ${message.includes('success') ? 'text-green-400' : 'text-red-400'}`}>
+            <p
+              className={`text-sm ${
+                message.includes('success')
+                  ? 'text-green-400'
+                  : 'text-red-400 animate-shake'
+              }`}
+            >
               {message}
             </p>
           )}
 
-          <div className="flex gap-3">
+          <div className="flex justify-end pt-2">
             <Button
               onClick={handleSubmit}
               disabled={loading}
-              className="flex-1 bg-blue-600 hover:bg-blue-700"
+              className="w-28 bg-blue-600 hover:bg-blue-700 cursor-pointer flex items-center justify-center gap-2"
             >
-              {loading ? 'Loading...' : 'Login'}
-            </Button>
-            <Button
-              variant="outline"
-              onClick={onClose}
-              className="border-slate-600 hover:bg-slate-700"
-            >
-              Cancel
+              {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+              {loading ? 'Loading' : 'Login'}
             </Button>
           </div>
         </div>

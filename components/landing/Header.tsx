@@ -17,16 +17,18 @@ export default function Header() {
           <Briefcase className="w-8 h-8" />
           <span className="text-xl font-bold">Job Tracker</span>
         </div>
+
         <div className="flex gap-3">
           <Button
             onClick={() => setIsLoginOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700"
+            className="bg-blue-600 hover:bg-blue-700 cursor-pointer"
           >
             Login
           </Button>
+
           <Button
             onClick={() => setIsSignupOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700"
+            className="bg-blue-600 hover:bg-blue-700 cursor-pointer"
           >
             Sign Up
           </Button>

@@ -39,7 +39,7 @@ export default function Features() {
           >
             <CardHeader>
               <div className="w-12 h-12 mx-auto mb-3 bg-slate-700 rounded-lg flex items-center justify-center">
-                <feature.icon className="w-6 h-6 text-blue-400" />
+                <feature.icon className="w-10 h-10 text-blue-400" />
               </div>
 
               <CardTitle className="text-lg text-white">{feature.title}</CardTitle>
