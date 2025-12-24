@@ -16,6 +16,7 @@ export function Navbar() {
         <Link href="/applications" className="hover:text-blue-500">Applications</Link>
         <Link href="/add-application" className="hover:text-blue-500">Add Application</Link>
         <Link href="/profile" className="hover:text-blue-500">Profile</Link>
+        <Link href="/documents" className="hover:text-blue-500">Document</Link>
       </div>
 
       <Button variant="outline" onClick={() => console.log("Logout")}>
