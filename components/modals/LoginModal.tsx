@@ -2,12 +2,7 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -25,16 +20,23 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const { login, loading } = useAuth();
 
   const handleSubmit = async () => {
-    const result = await login({ identifier, password });
-    setMessage(result.message);
+    if (!identifier || !password) {
+      setMessage('Please fill in all fields');
+      return;
+    }
 
-    if (result.success) {
+    const result = await login({ identifier, password });
+    
+    if (!result.success) {
+      setMessage(result.message || 'Login failed');
+    } else {
+      setMessage('Login successful! Redirecting...');
       setTimeout(() => {
         onClose();
         setIdentifier('');
         setPassword('');
         setMessage('');
-      }, 1500);
+      }, 500);
     }
   };
 
@@ -44,11 +46,6 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         className="
           bg-slate-800 text-white border-slate-700
           animate-in fade-in zoom-in-95 duration-300
-
-          [&>button]:cursor-pointer
-          [&>button]:transition-transform
-          [&>button]:duration-300
-          [&>button:hover]:scale-125
         "
       >
         <DialogHeader>
@@ -60,10 +57,12 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             <Label htmlFor="identifier">Email or Username</Label>
             <Input
               id="identifier"
+              placeholder="Enter email or username"
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-              className="bg-slate-700 border-slate-600"
+              className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
+              disabled={loading}
             />
           </div>
 
@@ -72,19 +71,19 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             <Input
               id="password"
               type="password"
+              placeholder="Enter password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-              className="bg-slate-700 border-slate-600"
+              className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
+              disabled={loading}
             />
           </div>
 
           {message && (
             <p
               className={`text-sm ${
-                message.includes('success')
-                  ? 'text-green-400'
-                  : 'text-red-400 animate-shake'
+                message.includes('successful') ? 'text-green-400' : 'text-red-400'
               }`}
             >
               {message}
@@ -95,7 +94,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             <Button
               onClick={handleSubmit}
               disabled={loading}
-              className="w-28 bg-blue-600 hover:bg-blue-700 cursor-pointer flex items-center justify-center gap-2"
+              className="w-28 bg-blue-600 hover:bg-blue-700 flex items-center justify-center gap-2"
             >
               {loading && <Loader2 className="h-4 w-4 animate-spin" />}
               {loading ? 'Loading' : 'Login'}

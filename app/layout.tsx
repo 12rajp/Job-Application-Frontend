@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: "Track your job applications efficiently",
 };
 
-export default function RootLayout({
+export default function RootLayout({ 
   children,
 }: {
   children: React.ReactNode;

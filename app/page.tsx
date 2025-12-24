@@ -1,3 +1,5 @@
+'use client';
+
 import Header from "@/components/landing/Header";
 import HeroSection from "@/components/landing/HeroSection";
 import Features from "@/components/landing/Features";

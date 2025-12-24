@@ -2,10 +2,11 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { Dialog, DialogContent,DialogHeader,DialogTitle,} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Loader2 } from 'lucide-react';
 
 interface SignupModalProps {
   isOpen: boolean;
@@ -20,21 +21,29 @@ export default function SignupModal({ isOpen, onClose }: SignupModalProps) {
   const { signup, loading } = useAuth();
 
   const handleSubmit = async () => {
-    const result = await signup({ 
-      user_name: username, 
-      email, 
-      password 
-    });
-    setMessage(result.message);
+    if (!username || !email || !password) {
+      setMessage('Please fill in all fields');
+      return;
+    }
+
+    if (password.length < 6) {
+      setMessage('Password must be at least 6 characters');
+      return;
+    }
+
+    const result = await signup({ user_name: username, email, password });
     
-    if (result.success) {
+    if (!result.success) {
+      setMessage(result.message || 'Registration failed');
+    } else {
+      setMessage('Registration successful! Redirecting...');
       setTimeout(() => {
         onClose();
         setUsername('');
         setEmail('');
         setPassword('');
         setMessage('');
-      }, 2000);
+      }, 500);
     }
   };
 
@@ -50,9 +59,11 @@ export default function SignupModal({ isOpen, onClose }: SignupModalProps) {
             <Label htmlFor="username">Username</Label>
             <Input
               id="username"
+              placeholder="Choose a username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="bg-slate-700 border-slate-600"
+              className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
+              disabled={loading}
             />
           </div>
           
@@ -61,9 +72,11 @@ export default function SignupModal({ isOpen, onClose }: SignupModalProps) {
             <Input
               id="email"
               type="email"
+              placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="bg-slate-700 border-slate-600"
+              className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
+              disabled={loading}
             />
           </div>
           
@@ -72,35 +85,31 @@ export default function SignupModal({ isOpen, onClose }: SignupModalProps) {
             <Input
               id="password"
               type="password"
+              placeholder="Create a password (min 6 characters)"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-              className="bg-slate-700 border-slate-600"
-              minLength={8}
+              className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
+              disabled={loading}
             />
-            <p className="text-xs text-gray-400 mt-1">Minimum 8 characters</p>
           </div>
-
+          
           {message && (
-            <p className={`text-sm ${message.includes('success') ? 'text-green-400' : 'text-red-400'}`}>
+            <p className={`text-sm ${
+              message.includes('successful') ? 'text-green-400' : 'text-red-400'
+            }`}>
               {message}
             </p>
           )}
-
-          <div className="flex gap-3">
-            <Button
-              onClick={handleSubmit}
+          
+          <div className="flex justify-end">
+            <Button 
+              onClick={handleSubmit} 
               disabled={loading}
-              className="flex-1 bg-blue-600 hover:bg-blue-700"
+              className="w-28 bg-blue-600 hover:bg-blue-700 flex items-center justify-center gap-2"
             >
-              {loading ? 'Loading...' : 'Sign Up'}
-            </Button>
-            <Button
-              variant="outline"
-              onClick={onClose}
-              className="border-slate-600 hover:bg-slate-700"
-            >
-              Cancel
+              {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+              {loading ? 'Loading' : 'Sign Up'}
             </Button>
           </div>
         </div>
