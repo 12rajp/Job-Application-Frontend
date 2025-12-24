@@ -1,8 +1,12 @@
-export default function DashboardPage() {
+export default function HomePage() {
   return (
-    <div className="min-h-screen p-8 text-red">
-      <h1 className="text-3xl font-bold">Welcome to your Dashboard!</h1>
-      <p>You are logged in successfully.</p>
+    <div>
+      <h2 className="text-2xl font-semibold mb-2">
+        Welcome back, Zee!
+      </h2>
+      <p className="text-muted-foreground">
+        Here's your job search overview.
+      </p>
     </div>
   );
 }

@@ -85,7 +85,7 @@ export default function SignupModal({ isOpen, onClose }: SignupModalProps) {
             <Input
               id="password"
               type="password"
-              placeholder="Create a password (min 6 characters)"
+              placeholder="Create a password (min 8 characters)"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}

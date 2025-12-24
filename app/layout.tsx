@@ -9,11 +9,7 @@ export const metadata: Metadata = {
   description: "Track your job applications efficiently",
 };
 
-export default function RootLayout({ 
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body className={inter.className}>{children}</body>
