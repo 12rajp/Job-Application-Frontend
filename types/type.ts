@@ -22,3 +22,16 @@ export interface Status {
   status_id: number;
   status_name: string;
 }
+
+export interface ApplicationForm {
+  company_id: string;
+  status_id: string;
+  position_title: string;
+  job_description: string;
+  job_link: string;
+  location: string;
+  job_type: string;
+  date_applied: string;
+  application_deadline: string;
+  salary_offered: string;
+}
