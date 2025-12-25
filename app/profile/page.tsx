@@ -1,164 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import axios from "axios";
 import { Camera, Mail, Phone, MapPin, Calendar, Lock, Save, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-
-interface User {
-  user_id: number;
-  user_name: string;
-  email: string;
-  full_name?: string;
-  phone?: string;
-  profile_photo?: string;
-  city?: string;
-  country?: string;
-  date_of_birth?: string;
-  gender?: "MALE" | "FEMALE" | "OTHER";
-  createdAt: string;
-}
+import { useProfile } from "@/hooks/profile";
 
 export default function ProfilePage() {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [editing, setEditing] = useState(false);
-  const [form, setForm] = useState({
-    user_name: "",
-    email: "",
-    full_name: "",
-    phone: "",
-    profile_photo: "",
-    city: "",
-    country: "",
-    date_of_birth: "",
-    gender: "",
-  });
-
-  const [passwordForm, setPasswordForm] = useState({
-    oldPassword: "",
-    password: "",
-    confirmPassword: "",
-  });
-
-  useEffect(() => {
-    fetchUserProfile();
-  }, []);
-
-  const getToken = () => {
-    return document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("token="))
-      ?.split("=")[1];
-  };
-
-  const getUserIdFromToken = (token: string) => {
-    try {
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      return payload.user_id;
-    } catch {
-      return null;
-    }
-  };
-
-  const fetchUserProfile = async () => {
-    const token = getToken();
-    if (!token) {
-      alert("Please login first!");
-      router.push("/login");
-      return;
-    }
-
-    const userId = getUserIdFromToken(token);
-    if (!userId) {
-      alert("Invalid token!");
-      return;
-    }
-
-    try {
-      const response = await axios.get(`http://localhost:4000/users/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      
-      const userData = response.data.user;
-      setUser(userData);
-      setForm({
-        user_name: userData.user_name || "",
-        email: userData.email || "",
-        full_name: userData.full_name || "",
-        phone: userData.phone || "",
-        profile_photo: userData.profile_photo || "",
-        city: userData.city || "",
-        country: userData.country || "",
-        date_of_birth: userData.date_of_birth ? userData.date_of_birth.split("T")[0] : "",
-        gender: userData.gender || "",
-      });
-      setLoading(false);
-    } catch (error: any) {
-      alert(error.response?.data?.message || "Error fetching profile");
-      setLoading(false);
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPasswordForm({ ...passwordForm, [e.target.name]: e.target.value });
-  };
-
-  const handleUpdate = async () => {
-    const token = getToken();
-    if (!token || !user) return;
-
-    try {
-      await axios.put(
-        `http://localhost:4000/users/update/${user.user_id}`,
-        form,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      
-      alert("Profile updated successfully!");
-      setEditing(false);
-      fetchUserProfile();
-    } catch (error: any) {
-      alert(error.response?.data?.message || "Error updating profile");
-    }
-  };
-
-  const handlePasswordUpdate = async () => {
-    if (passwordForm.password !== passwordForm.confirmPassword) {
-      alert("Passwords don't match!");
-      return;
-    }
-
-    const token = getToken();
-    if (!token) return;
-
-    try {
-      await axios.post(
-        "http://localhost:4000/users/update-password",
-        {
-          oldPassword: passwordForm.oldPassword,
-          password: passwordForm.password,
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      
-      alert("Password updated successfully!");
-      setPasswordForm({ oldPassword: "", password: "", confirmPassword: "" });
-    } catch (error: any) {
-      alert(error.response?.data?.message || "Error updating password");
-    }
-  };
+  const {
+    user,
+    loading,
+    editing,
+    setEditing,
+    form,
+    passwordForm,
+    handleChange,
+    handlePasswordChange,
+    handleUpdate,
+    handlePasswordUpdate,
+  } = useProfile();
 
   if (loading) {
     return (
@@ -176,6 +41,7 @@ export default function ProfilePage() {
 
   return (
     <div className="max-w-5xl mx-auto p-6">
+      {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-gray-800">My Profile</h1>
         <Button
@@ -195,9 +61,7 @@ export default function ProfilePage() {
               <div className="relative">
                 <Avatar className="h-32 w-32">
                   <AvatarImage src={form.profile_photo} />
-                  <AvatarFallback className="text-2xl bg-blue-100 text-blue-600">
-                    {initials}
-                  </AvatarFallback>
+                  <AvatarFallback className="text-2xl bg-blue-100 text-blue-600">{initials}</AvatarFallback>
                 </Avatar>
                 {editing && (
                   <button className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition">
@@ -205,10 +69,7 @@ export default function ProfilePage() {
                   </button>
                 )}
               </div>
-
-              <h2 className="mt-4 text-xl font-semibold text-gray-800">
-                {user.full_name || user.user_name}
-              </h2>
+              <h2 className="mt-4 text-xl font-semibold text-gray-800">{user.full_name || user.user_name}</h2>
               <p className="text-sm text-gray-500">@{user.user_name}</p>
 
               <div className="mt-6 w-full space-y-3">
@@ -237,7 +98,6 @@ export default function ProfilePage() {
           </CardContent>
         </Card>
 
-        {/* Main Content */}
         <div className="md:col-span-2">
           <Tabs defaultValue="profile" className="w-full">
             <TabsList className="grid w-full grid-cols-2">

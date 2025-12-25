@@ -50,3 +50,35 @@ export interface UploadForm {
   doc_type: string;
   app_id: string;
 }
+
+export interface User {
+  user_id: number;
+  user_name: string;
+  email: string;
+  full_name?: string;
+  phone?: string;
+  profile_photo?: string;
+  city?: string;
+  country?: string;
+  date_of_birth?: string;
+  gender?: "MALE" | "FEMALE" | "OTHER";
+  createdAt: string;
+}
+
+export interface ProfileForm {
+  user_name: string;
+  email: string;
+  full_name: string;
+  phone: string;
+  profile_photo: string;
+  city: string;
+  country: string;
+  date_of_birth: string;
+  gender: string;
+}
+
+export interface PasswordForm {
+  oldPassword: string;
+  password: string;
+  confirmPassword: string;
+}
