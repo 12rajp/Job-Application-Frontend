@@ -35,3 +35,18 @@ export interface ApplicationForm {
   application_deadline: string;
   salary_offered: string;
 }
+
+export interface Document {
+  doc_id: number;
+  doc_name: string;
+  doc_type: string;
+  createdAt: string;
+  size: number;
+  file_path?: string;
+}
+
+export interface UploadForm {
+  doc_name: string;
+  doc_type: string;
+  app_id: string;
+}

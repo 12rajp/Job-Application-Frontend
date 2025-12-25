@@ -1,209 +1,32 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { Upload, Download, Trash2, FileText } from 'lucide-react';
-
-interface Document {
-  doc_id: number;
-  doc_name: string;
-  doc_type: string;
-  createdAt: string;
-  size: number;
-  file_path?: string;
-}
+import { Upload, Download, Trash2, FileText } from "lucide-react";
+import { useDocuments } from "@/hooks/document";
 
 export default function DocumentsSection() {
-  const [documents, setDocuments] = useState<Document[]>([]);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [uploadForm, setUploadForm] = useState({
-    doc_name: '',
-    doc_type: 'Resume',
-    app_id: '' 
-  });
+  const {
+    documents,
+    selectedFile,
+    setSelectedFile,
+    uploadForm,
+    setUploadForm,
+    loading,
+    handleUpload,
+    handleDelete,
+    handleDownload,
+    formatDate
+  } = useDocuments();
 
-  const getToken = () => {
-    return document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("token="))
-      ?.split("=")[1];
-  };
-
-  const fetchDocuments = async () => {
-    const token = getToken();
-    if (!token) {
-      alert("Please login first!");
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const response = await fetch('http://localhost:4000/document', {
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      const data = await response.json();
-      setDocuments(data.data || []);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching documents:", error);
-      alert("Failed to fetch documents");
-      setLoading(false);
-    }
-  };
-
-
-  useEffect(() => {
-    fetchDocuments();
-  }, []);
-
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
-      setUploadForm(prev => ({
-        ...prev,
-        doc_name: file.name
-      }));
-    }
-  };
-
-  const handleUpload = async () => {
-    if (!selectedFile) {
-      alert("Please select a file first!");
-      return;
-    }
-
-    const token = getToken();
-    if (!token) {
-      alert("Please login first!");
-      return;
-    }
-
-    try {
-      
-      const formData = new FormData();
-      formData.append('file', selectedFile);
-      formData.append('doc_name', uploadForm.doc_name);
-      formData.append('doc_type', uploadForm.doc_type);
-      
-      if (uploadForm.app_id) {
-        formData.append('app_id', uploadForm.app_id);
-      }
-
-      const response = await fetch('http://localhost:4000/document', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formData
-      });
-
-      if (!response.ok) {
-        throw new Error('Upload failed');
-      }
-
-      alert("Document uploaded successfully!");
-      
-      fetchDocuments();
-      
-      setSelectedFile(null);
-      setUploadForm({ doc_name: '', doc_type: 'Resume', app_id: '' });
-      
-      const fileInput = document.getElementById('file-input') as HTMLInputElement;
-      if (fileInput) fileInput.value = '';
-      
-    } catch (error) {
-      console.error("Upload error:", error);
-      alert("Failed to upload document");
-    }
-  };
-
-  const handleDelete = async (docId: number) => {
-    if (!confirm("Are you sure you want to delete this document?")) {
-      return;
-    }
-
-    const token = getToken();
-    if (!token) return;
-
-    try {
-      const response = await fetch(`http://localhost:4000/document/${docId}`, {
-        method: 'DELETE',
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Delete failed');
-      }
-
-      alert("Document deleted successfully!");
-      
-      setDocuments(documents.filter(doc => doc.doc_id !== docId));
-      
-    } catch (error) {
-      console.error("Delete error:", error);
-      alert("Failed to delete document");
-    }
-  };
-
-  const handleDownload = async (doc: Document) => {
-    const token = getToken();
-    if (!token) return;
-
-    try {
-      const response = await fetch(
-        `http://localhost:4000/document/${doc.doc_id}/download`,
-        {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error('Download failed');
-      }
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', doc.doc_name);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      
-    } catch (error) {
-      console.error("Download error:", error);
-      alert("Failed to download document");
-    }
-  };
-
-  const formatDate = (dateString: string | number | Date) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
-
-  if (loading) {
-    return (
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
+  if (loading) return (
+    <div className="bg-white rounded-lg border p-6">
+      <div className="flex justify-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
-    );
-  }
+    </div>
+  );
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-6">
+    <div className="bg-white rounded-lg border p-6">
       <h2 className="text-2xl font-bold text-gray-900 mb-2">My Documents</h2>
       <p className="text-gray-600 mb-6">Upload and manage your resumes and cover letters</p>
 
@@ -218,7 +41,7 @@ export default function DocumentsSection() {
           
           <input
             type="file"
-            onChange={handleFileSelect}
+            onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
             className="hidden"
             id="file-input"
             accept=".pdf,.doc,.docx"
@@ -262,7 +85,6 @@ export default function DocumentsSection() {
           )}
         </div>
       </div>
-
       <div>
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Uploaded Documents</h3>
         
