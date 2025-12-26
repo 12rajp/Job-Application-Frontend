@@ -12,7 +12,7 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="w-64 bg-gray-50 border-r max-h-[calc(100vh-64px)] overflow-y-auto p-4">
+    <aside className="w-64 bg-gray-50 border-r h-screen overflow-y-auto p-4 fixed top-0 left-0 pt-20 z-40">
       <nav className="space-y-2">
         <SidebarItem icon={LayoutDashboard} label="Overview" href="/dashboard" active />
         <SidebarItem icon={FileText} label="Applications" href="/dashboard/applications" />

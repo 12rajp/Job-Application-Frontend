@@ -5,10 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogFooter,} from "@/components/ui/dialog";
-import { Search, Plus, Eye, Pencil, Trash2} from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Search, Plus, Eye, Pencil, Trash2 } from "lucide-react";
 import { allApplications } from "@/hooks/allApplications";
 import { Application } from "@/types/type";
+import Link from "next/link";
 
 export default function AllApplicationsPage() {
   const {
@@ -99,12 +100,8 @@ export default function AllApplicationsPage() {
     return company.includes(query) || position.includes(query);
   });
 
-  const navigateTo = (path: string) => {
-    window.location.href = path;
-  };
-
   return (
-    <div className="max-w-7xl mx-auto p-8">
+    <div className="max-w-7xl mx-auto pt-15 px-8">
       <div className="bg-white rounded-xl shadow-lg p-8">
         <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">
           My Applications
@@ -120,12 +117,11 @@ export default function AllApplicationsPage() {
               className="pl-10"
             />
           </div>
-          <Button
-            className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2"
-            onClick={() => navigateTo("/add-application")}
-          >
-            <Plus className="w-4 h-4" /> Add New
-          </Button>
+          <Link href="/dashboard/add-application">
+            <Button className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2">
+              <Plus className="w-4 h-4" /> Add New
+            </Button>
+          </Link>
         </div>
 
         <div className="overflow-x-auto">
@@ -199,7 +195,6 @@ export default function AllApplicationsPage() {
           </table>
         </div>
       </div>
-
       <Dialog open={viewModal} onOpenChange={setViewModal}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
@@ -268,7 +263,6 @@ export default function AllApplicationsPage() {
           )}
         </DialogContent>
       </Dialog>
-
       <Dialog open={editModal} onOpenChange={setEditModal}>
         <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
