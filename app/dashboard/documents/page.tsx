@@ -139,12 +139,6 @@ export default function DocumentsSection() {
       </div>
 
       <div className="mt-6 pt-6 border-t border-gray-200">
-        <button 
-          onClick={() => window.location.href = '/dashboard'}
-          className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-        >
-          ← Back to Dashboard
-        </button>
       </div>
     </div>
   );

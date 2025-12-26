@@ -82,3 +82,17 @@ export interface PasswordForm {
   password: string;
   confirmPassword: string;
 }
+
+export interface Reminder {
+  rem_id: number;
+  reminder_at: string;
+  method: "EMAIL" | "INAPP" | "BOTH";
+  message: string;
+  is_sent: boolean;
+  application: {
+    position_title: string;
+    company: {
+      company_name: string;
+    };
+  };
+}

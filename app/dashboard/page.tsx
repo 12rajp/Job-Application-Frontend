@@ -1,12 +1,15 @@
-export default function HomePage() {
+"use client";
+
+import AnalyticsComponent from "@/components/AnalyticsComponent";
+import AllApplicationsPage from "@/app/dashboard/applications/page";
+
+export default function DashboardPage() {
   return (
-    <div>
-      <h2 className="text-2xl font-semibold mb-2">
-        Welcome back, Zee!
-      </h2>
-      <p className="text-muted-foreground">
-        Here's your job search overview.
-      </p>
+    <div className="max-w-7xl mx-auto p-8 space-y-8">
+      <AnalyticsComponent showCharts={true} />
+      <div className="bg-white rounded-xl shadow-lg p-8">
+        <AllApplicationsPage />
+      </div>
     </div>
   );
 }

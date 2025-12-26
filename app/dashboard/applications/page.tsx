@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogFooter,} from "@/components/ui/dialog";
-import { Search, Plus, Eye, Pencil, Trash2, ArrowLeft } from "lucide-react";
+import { Search, Plus, Eye, Pencil, Trash2} from "lucide-react";
 import { allApplications } from "@/hooks/allApplications";
 import { Application } from "@/types/type";
 
@@ -198,17 +198,8 @@ export default function AllApplicationsPage() {
             </tbody>
           </table>
         </div>
-
-        <Button
-          variant="outline"
-          className="mt-6"
-          onClick={() => navigateTo("/dashboard")}
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" /> Back to Dashboard
-        </Button>
       </div>
 
-      {/* View Modal */}
       <Dialog open={viewModal} onOpenChange={setViewModal}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
@@ -278,7 +269,6 @@ export default function AllApplicationsPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Edit Modal */}
       <Dialog open={editModal} onOpenChange={setEditModal}>
         <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
