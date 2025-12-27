@@ -1,51 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import axios from "axios";
 import { TrendingUp, BarChart3 } from "lucide-react";
 import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,Legend,} from "recharts";
 
-type AnalyticsData = {
-  status_id: number;
-  status_name: string;
-  total: number;
-};
-
-type AnalyticsComponentProps = {
-  showCharts?: boolean;
-};
+import { useAnalytics } from "@/hooks/analytics";
+import { AnalyticsComponentProps } from "@/types/type";
 
 export default function AnalyticsComponent({
   showCharts = false,
 }: AnalyticsComponentProps) {
-  const [data, setData] = useState<AnalyticsData[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchAnalytics();
-  }, []);
-
-  const fetchAnalytics = async () => {
-    try {
-      const token = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("token="))
-        ?.split("=")[1];
-
-      if (!token) return;
-
-      const res = await axios.get("http://localhost:4000/analytics", {
-        headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true,
-      });
-
-      setData(res.data.data);
-    } catch (error) {
-      console.error("Analytics fetch error", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data, loading } = useAnalytics();
 
   const getAnalyticsColor = (statusName: string) => {
     const colors: Record<string, string> = {
@@ -59,11 +23,11 @@ export default function AnalyticsComponent({
   };
 
   const CHART_COLORS: Record<string, string> = {
-    Applied: "#6b7280",   
-    Interview: "#f97316", 
-    Offer: "#22c55e",     
-    Rejected: "#ef4444",  
-    Hired: "#ec4899",    
+    Applied: "#6b7280",
+    Interview: "#f97316",
+    Offer: "#22c55e",
+    Rejected: "#ef4444",
+    Hired: "#ec4899",
   };
 
   const chartData = data
@@ -74,14 +38,20 @@ export default function AnalyticsComponent({
       fill: CHART_COLORS[item.status_name],
     }));
 
-  const totalApplications = data.reduce((sum, item) => sum + item.total, 0);
+  const totalApplications = data.reduce(
+    (sum, item) => sum + item.total,
+    0
+  );
 
   if (loading) {
     return (
-      <div className="text-center py-8 text-gray-500">Loading analytics...</div>
+      <div className="text-center py-8 text-gray-500">
+        Loading analytics...
+      </div>
     );
   }
 
+  
   return (
     <>
       <div className="bg-white rounded-xl shadow-lg p-8">

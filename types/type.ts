@@ -96,3 +96,13 @@ export interface Reminder {
     };
   };
 }
+
+export type AnalyticsData = {
+  status_id: number;
+  status_name: string;
+  total: number;
+};
+
+export type AnalyticsComponentProps = {
+  showCharts?: boolean;
+};

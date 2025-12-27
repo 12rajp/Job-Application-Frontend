@@ -24,9 +24,8 @@ export default function DocumentsSection() {
       </div>
     </div>
   );
-
   return (
-    <div className="bg-white rounded-lg border p-6">
+     <div className="bg-white rounded-lg border p-6 mt-16">
       <h2 className="text-2xl font-bold text-gray-900 mb-2">My Documents</h2>
       <p className="text-gray-600 mb-6">Upload and manage your resumes and cover letters</p>
 
