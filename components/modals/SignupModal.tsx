@@ -32,7 +32,7 @@ export default function SignupModal({ isOpen, onClose }: SignupModalProps) {
     }
 
     const result = await signup({ user_name: username, email, password });
-    
+
     if (!result.success) {
       setMessage(result.message || 'Registration failed');
     } else {
@@ -49,25 +49,24 @@ export default function SignupModal({ isOpen, onClose }: SignupModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-slate-800 text-white border-slate-700">
-        <DialogHeader>
+      <DialogContent className="bg-slate-800 text-white border-slate-700 p-6">
+        <DialogHeader className="mb-4">
           <DialogTitle className="text-2xl">Sign Up</DialogTitle>
         </DialogHeader>
-        
+
         <div className="space-y-4">
-          <div>
+          <div className="space-y-1">
             <Label htmlFor="username">Username</Label>
             <Input
               id="username"
               placeholder="Choose a username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
-              disabled={loading}
-            />
+              className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400 px-3 py-2 rounded"
+              disabled={loading} />
           </div>
-          
-          <div>
+
+          <div className="space-y-1">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
@@ -75,38 +74,35 @@ export default function SignupModal({ isOpen, onClose }: SignupModalProps) {
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
+              className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400 px-3 py-2 rounded"
               disabled={loading}
             />
           </div>
-          
-          <div>
+          <div className="space-y-1">
             <Label htmlFor="password">Password</Label>
             <Input
               id="password"
               type="password"
-              placeholder="Create a password (min 8 characters)"
+              placeholder="Create a password (min 6 characters)"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-              className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
+              className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400 px-3 py-2 rounded"
               disabled={loading}
             />
           </div>
-          
+
           {message && (
-            <p className={`text-sm ${
-              message.includes('successful') ? 'text-green-400' : 'text-red-400'
-            }`}>
+            <p className={`text-sm ${message.includes('successful') ? 'text-green-400' : 'text-red-400'}`}>
               {message}
             </p>
           )}
-          
+
           <div className="flex justify-end">
-            <Button 
-              onClick={handleSubmit} 
+            <Button
+              onClick={handleSubmit}
               disabled={loading}
-              className="w-28 bg-blue-600 hover:bg-blue-700 flex items-center justify-center gap-2"
+              className="w-28 bg-blue-600 hover:bg-blue-700 cursor-pointer transition-all duration-300 flex items-center justify-center gap-2"
             >
               {loading && <Loader2 className="h-4 w-4 animate-spin" />}
               {loading ? 'Loading' : 'Sign Up'}

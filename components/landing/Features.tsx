@@ -1,52 +1,34 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Briefcase, CheckCircle2, BarChart3, FileText} from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"; 
+import { Briefcase, CheckCircle2, BarChart3, FileText } from "lucide-react";
 
 export default function Features() {
   const features = [
-    {
-      icon: Briefcase,
-      title: "Track Applications",
-      description:
-        "Keep all your job applications organized in one place with status tracking and follow-up reminders.",
-    },
-    {
-      icon: CheckCircle2,
-      title: "Application Status",
-      description:
-        "Monitor the progress of each application from submission to offer, with clear status indicators.",
-    },
-    {
-      icon: BarChart3,
-      title: "Analytics Dashboard",
-      description:
-        "Get insights into your job search with statistics on application responses and interview rates.",
-    },
-    {
-      icon: FileText,
-      title: "Resume Management",
-      description:
-        "Store and organize different versions of your resume for different job types and industries.",
-    },
+    { icon: Briefcase, title: "Track Applications", description: "Keep all your job applications organized." },
+    { icon: CheckCircle2, title: "Application Status", description: "Monitor progress with clear status indicators." },
+    { icon: BarChart3, title: "Analytics Dashboard", description: "Insights into responses and interviews." },
+    { icon: FileText, title: "Resume Management", description: "Store different resume versions easily." },
   ];
 
   return (
-    <section className="container mx-auto px-6 py-16">
-      <div className="grid md:grid-cols-4 gap-8">
+    <section className="container mx-auto px-4 py-16">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {features.map((feature, index) => (
           <Card
             key={index}
-            className="text-center bg-[#1A253A] text-white p-6 transform transition-transform hover:scale-105 hover:shadow-xl relative overflow-visible"
-          >
+            className="text-center bg-[#1A253A] p-6 hover:scale-105 transition-transform duration-300">
             <CardHeader>
               <div className="w-12 h-12 mx-auto mb-3 bg-slate-700 rounded-lg flex items-center justify-center">
-                <feature.icon className="w-10 h-10 text-blue-400" />
+                <feature.icon className="w-8 h-8 text-blue-400" />
               </div>
-
-              <CardTitle className="text-lg text-white">{feature.title}</CardTitle>
+              <CardTitle
+                className=" text-white text-lg sm:text-xl font-semibold">
+                {feature.title}
+              </CardTitle>
             </CardHeader>
-
             <CardContent>
-              <p className="text-gray-300 text-sm">{feature.description}</p>
+              <p className="text-gray-300 text-sm sm:text-base">
+                {feature.description}
+              </p>
             </CardContent>
           </Card>
         ))}

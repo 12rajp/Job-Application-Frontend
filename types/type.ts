@@ -106,3 +106,14 @@ export type AnalyticsData = {
 export type AnalyticsComponentProps = {
   showCharts?: boolean;
 };
+
+export interface LoginCredentials {
+  identifier: string;
+  password: string;
+}
+
+export interface SignupData {
+  user_name: string;
+  email: string;
+  password: string;
+}

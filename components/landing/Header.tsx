@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState } from "react";
 import { Briefcase } from "lucide-react";
@@ -12,34 +12,27 @@ export default function Header() {
 
   return (
     <>
-      <header className="container mx-auto px-6 py-6 flex justify-between items-center">
+      <header className="container mx-auto px-4 py-6 flex flex-col sm:flex-row gap-4 sm:gap-0 justify-between items-center">
         <div className="flex items-center gap-2">
-          <Briefcase className="w-8 h-8" />
+          <Briefcase className="w-7 h-7 text-blue-400" />
           <span className="text-xl font-bold">Job Tracker</span>
         </div>
-
         <div className="flex gap-3">
           <Button
             onClick={() => setIsLoginOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700 cursor-pointer"
-          >
-            Login
+            className=" bg-blue-600 hover:bg-blue-700 cursor-pointer  transition-colors duration-300  ">Login
           </Button>
 
           <Button
             onClick={() => setIsSignupOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700 cursor-pointer"
-          >
+            className=" bg-blue-600 hover:bg-blue-700 cursor-pointer  transition-colors duration-300">
             Sign Up
           </Button>
         </div>
       </header>
 
       <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
-      <SignupModal
-        isOpen={isSignupOpen}
-        onClose={() => setIsSignupOpen(false)}
-      />
+      <SignupModal isOpen={isSignupOpen} onClose={() => setIsSignupOpen(false)} />
     </>
   );
 }

@@ -2,19 +2,22 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { LoginCredentials, SignupData } from '@/types/type';
+import { API_URL } from '@/lib/constants';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export interface LoginCredentials {
-  identifier: string;
-  password: string;
-}
+// const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export interface SignupData {
-  user_name: string;
-  email: string;
-  password: string;
-}
+// export interface LoginCredentials {
+//   identifier: string;
+//   password: string;
+// }
+
+// export interface SignupData {
+//   user_name: string;
+//   email: string;
+//   password: string;
+// }
 
 export function useAuth() {
   const [loading, setLoading] = useState(false);
