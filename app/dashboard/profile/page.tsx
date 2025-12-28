@@ -7,13 +7,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Camera,Mail,Phone,MapPin,Calendar,Save,} from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Camera, Mail, Phone, MapPin, Calendar, Save } from "lucide-react";
 import { useProfile } from "@/hooks/profile";
 import SecurityTab from "@/components/profile/SecuritySection";
 
-export default function ProfilePage() {
-  const router = useRouter();
+function ProfilePage() {
   const {
     user,
     loading,
@@ -25,6 +23,7 @@ export default function ProfilePage() {
     handlePasswordChange,
     handleUpdate,
     handlePasswordUpdate,
+    handleDeleteAccount,
   } = useProfile();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -131,12 +130,14 @@ export default function ProfilePage() {
             </div>
           </CardContent>
         </Card>
+
         <div className="md:col-span-2">
           <Tabs defaultValue="profile" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="profile">Profile Information</TabsTrigger>
               <TabsTrigger value="security">Security</TabsTrigger>
             </TabsList>
+
             <TabsContent value="profile">
               <Card>
                 <CardHeader>
@@ -285,11 +286,13 @@ export default function ProfilePage() {
                 </CardContent>
               </Card>
             </TabsContent>
+
             <TabsContent value="security">
               <SecurityTab
                 passwordForm={passwordForm}
                 handlePasswordChange={handlePasswordChange}
                 handlePasswordUpdate={handlePasswordUpdate}
+                handleDeleteAccount={handleDeleteAccount}
               />
             </TabsContent>
           </Tabs>
@@ -298,3 +301,5 @@ export default function ProfilePage() {
     </div>
   );
 }
+
+export default ProfilePage;

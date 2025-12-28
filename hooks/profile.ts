@@ -171,6 +171,33 @@ export const useProfile = () => {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    const token = getToken();
+    if (!token || !user) return;
+
+    const finalConfirm = window.confirm(
+      "Are you absolutely sure? This action cannot be undone and all your data will be permanently deleted from the database."
+    );
+
+    if (!finalConfirm) return;
+
+    try {
+      await axios.delete(
+        `${API_URL}/users/delete/${user.user_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      alert("Account deleted successfully!");
+      router.push("/login");
+    } catch (error: any) {
+      alert(error.response?.data?.message || "Error deleting account");
+    }
+  };
+
   return {
     user,
     loading,
@@ -182,5 +209,6 @@ export const useProfile = () => {
     handlePasswordChange,
     handleUpdate,
     handlePasswordUpdate,
+    handleDeleteAccount, 
   };
 };

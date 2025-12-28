@@ -126,4 +126,5 @@ export interface SecurityTabProps {
   };
   handlePasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handlePasswordUpdate: () => void;
+   handleDeleteAccount: () => void;
 }
