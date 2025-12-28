@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog,DialogContent,DialogHeader,DialogTitle,DialogFooter,} from "@/components/ui/dialog";
 import { Search, Plus, Eye, Pencil, Trash2 } from "lucide-react";
 import { allApplications } from "@/hooks/allApplications";
 import { Application } from "@/types/type";
@@ -85,7 +85,9 @@ export default function AllApplicationsPage() {
       job_type: editForm.job_type || null,
       date_applied: editForm.date_applied || null,
       application_deadline: editForm.application_deadline || null,
-      salary_offered: editForm.salary_offered ? Number(editForm.salary_offered) : null,
+      salary_offered: editForm.salary_offered
+        ? Number(editForm.salary_offered)
+        : null,
     };
 
     await updateApplication(selectedApp.app_id, updateData);
@@ -99,16 +101,14 @@ export default function AllApplicationsPage() {
     const query = searchQuery.toLowerCase();
     return company.includes(query) || position.includes(query);
   });
-
   return (
-    <div className="max-w-7xl mx-auto pt-15 px-8">
+    <div className="max-w-5xl mx-auto pt-15 px-8">
       <div className="bg-white rounded-xl shadow-lg p-8">
-        <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-6 text-center">
           My Applications
         </h1>
-
-        <div className="flex justify-between items-center mb-6">
-          <div className="relative w-96">
+        <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center mb-6 gap-4">
+          <div className="relative w-full sm:w-96">
             <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
             <Input
               placeholder="Search applications..."
@@ -117,8 +117,9 @@ export default function AllApplicationsPage() {
               className="pl-10"
             />
           </div>
-          <Link href="/dashboard/add-application">
-            <Button className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2">
+
+          <Link href="/dashboard/add-application" className="w-full sm:w-auto">
+            <Button className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 flex items-center gap-2 justify-center">
               <Plus className="w-4 h-4" /> Add New
             </Button>
           </Link>
@@ -139,13 +140,16 @@ export default function AllApplicationsPage() {
               {filteredApplications.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="text-center p-8 text-gray-500">
-                    No applications found. Click "Add New" to create your first application!
+                    No applications found. Click "Add New" to create your first
+                    application!
                   </td>
                 </tr>
               ) : (
                 filteredApplications.map((app) => (
                   <tr key={app.app_id} className="border-b hover:bg-gray-50">
-                    <td className="p-4 font-medium">{getCompanyName(app.company_id)}</td>
+                    <td className="p-4 font-medium">
+                      {getCompanyName(app.company_id)}
+                    </td>
                     <td className="p-4">{app.position_title}</td>
                     <td className="p-4">
                       {new Date(app.date_applied).toLocaleDateString("en-US", {
@@ -205,7 +209,9 @@ export default function AllApplicationsPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label className="font-semibold">Company</Label>
-                  <p className="text-gray-700">{getCompanyName(selectedApp.company_id)}</p>
+                  <p className="text-gray-700">
+                    {getCompanyName(selectedApp.company_id)}
+                  </p>
                 </div>
                 <div>
                   <Label className="font-semibold">Position</Label>
@@ -213,31 +219,43 @@ export default function AllApplicationsPage() {
                 </div>
                 <div>
                   <Label className="font-semibold">Status</Label>
-                  <p className="text-gray-700">{getStatusName(selectedApp.status_id)}</p>
+                  <p className="text-gray-700">
+                    {getStatusName(selectedApp.status_id)}
+                  </p>
                 </div>
                 <div>
                   <Label className="font-semibold">Job Type</Label>
-                  <p className="text-gray-700">{selectedApp.job_type || "N/A"}</p>
+                  <p className="text-gray-700">
+                    {selectedApp.job_type || "N/A"}
+                  </p>
                 </div>
                 <div>
                   <Label className="font-semibold">Location</Label>
-                  <p className="text-gray-700">{selectedApp.location || "N/A"}</p>
+                  <p className="text-gray-700">
+                    {selectedApp.location || "N/A"}
+                  </p>
                 </div>
                 <div>
                   <Label className="font-semibold">Date Applied</Label>
-                  <p className="text-gray-700">{new Date(selectedApp.date_applied).toLocaleDateString()}</p>
+                  <p className="text-gray-700">
+                    {new Date(selectedApp.date_applied).toLocaleDateString()}
+                  </p>
                 </div>
                 <div>
                   <Label className="font-semibold">Deadline</Label>
                   <p className="text-gray-700">
                     {selectedApp.application_deadline
-                      ? new Date(selectedApp.application_deadline).toLocaleDateString()
+                      ? new Date(
+                          selectedApp.application_deadline
+                        ).toLocaleDateString()
                       : "N/A"}
                   </p>
                 </div>
                 <div>
                   <Label className="font-semibold">Salary</Label>
-                  <p className="text-gray-700">{selectedApp.salary_offered || "N/A"}</p>
+                  <p className="text-gray-700">
+                    {selectedApp.salary_offered || "N/A"}
+                  </p>
                 </div>
               </div>
               <div>
@@ -350,7 +368,10 @@ export default function AllApplicationsPage() {
                 type="date"
                 value={editForm.application_deadline}
                 onChange={(e) =>
-                  setEditForm({ ...editForm, application_deadline: e.target.value })
+                  setEditForm({
+                    ...editForm,
+                    application_deadline: e.target.value,
+                  })
                 }
               />
             </div>
@@ -386,7 +407,10 @@ export default function AllApplicationsPage() {
             <Button variant="outline" onClick={() => setEditModal(false)}>
               Cancel
             </Button>
-            <Button onClick={handleUpdateSubmit} className="bg-blue-600 hover:bg-blue-700">
+            <Button
+              onClick={handleUpdateSubmit}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
               Update Application
             </Button>
           </DialogFooter>

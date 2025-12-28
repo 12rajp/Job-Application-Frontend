@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { AnalyticsData } from "@/types/type";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+import { API_URL } from '@/lib/constants';
 
 export const useAnalytics = () => {
   const [data, setData] = useState<AnalyticsData[]>([]);

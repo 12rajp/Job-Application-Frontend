@@ -5,9 +5,9 @@ import AllApplicationsPage from "@/app/dashboard/applications/page";
 
 export default function DashboardPage() {
   return (
-    <div className="ml-10 max-w-7xl mx-auto p-8 space-y-8 mt-10">
+    <div className="w-full max-w-12xl xl:max-w-400 mx-auto px-4 sm:px-8 space-y-3">
       <AnalyticsComponent showCharts={true} />
-      <div className="bg-white rounded-xl shadow-lg p-8">
+      <div className="bg-white rounded-xl shadow-lg p-3">
         <AllApplicationsPage />
       </div>
     </div>

@@ -1,8 +1,7 @@
 "use client";
 
 import { TrendingUp, BarChart3 } from "lucide-react";
-import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,Legend,} from "recharts";
-
+import { BarChart,Bar,XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend,} from "recharts";
 import { useAnalytics } from "@/hooks/analytics";
 import { AnalyticsComponentProps } from "@/types/type";
 
@@ -38,20 +37,13 @@ export default function AnalyticsComponent({
       fill: CHART_COLORS[item.status_name],
     }));
 
-  const totalApplications = data.reduce(
-    (sum, item) => sum + item.total,
-    0
-  );
+  const totalApplications = data.reduce((sum, item) => sum + item.total, 0);
 
   if (loading) {
     return (
-      <div className="text-center py-8 text-gray-500">
-        Loading analytics...
-      </div>
+      <div className="text-center py-8 text-gray-500">Loading analytics...</div>
     );
   }
-
-  
   return (
     <>
       <div className="bg-white rounded-xl shadow-lg p-8">
@@ -68,7 +60,7 @@ export default function AnalyticsComponent({
           </p>
         ) : (
           <>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {data.map((item) => (
                 <div
                   key={item.status_id}
@@ -153,28 +145,40 @@ export default function AnalyticsComponent({
                 </BarChart>
               </ResponsiveContainer>
             </div>
-
             <div className="bg-gray-50 rounded-lg p-6">
               <h3 className="text-lg font-semibold text-gray-700 mb-4 text-center">
                 Status Distribution
               </h3>
-              <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveContainer
+                width="100%"
+                height={
+                  typeof window !== "undefined" && window.innerWidth < 400
+                    ? 260
+                    : typeof window !== "undefined" && window.innerWidth < 640
+                    ? 280
+                    : 300
+                }
+              >
                 <PieChart>
                   <Pie
                     data={chartData}
                     cx="50%"
                     cy="50%"
-                    labelLine={false}
-                    label={({ name, percent }) =>
-                      `${name}: ${percent ? (percent * 100).toFixed(0) : 0}%`
-                    }
-                    fill="#8884d8"
                     dataKey="value"
+                    labelLine={false}
+                    outerRadius={
+                      typeof window !== "undefined" && window.innerWidth < 400? 75 : typeof window !== "undefined" &&window.innerWidth < 640? 85: 95}
+                    label={({ name, percent }) =>
+                      typeof window !== "undefined" && window.innerWidth >= 1024
+                        ? `${name} ${(percent ? percent * 100 : 0).toFixed(0)}%`
+                        : null
+                    }
                   >
                     {chartData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.fill} />
                     ))}
                   </Pie>
+
                   <Tooltip
                     contentStyle={{
                       backgroundColor: "#fff",
@@ -183,11 +187,15 @@ export default function AnalyticsComponent({
                       padding: "8px",
                     }}
                   />
-                  <Legend
-                    verticalAlign="bottom"
-                    height={36}
-                    iconType="circle"
-                  />
+                  {typeof window !== "undefined" &&
+                    window.innerWidth >= 640 && (
+                      <Legend
+                        verticalAlign="bottom"
+                        height={36}
+                        iconType="circle"
+                        wrapperStyle={{ fontSize: "12px", paddingTop: "8px" }}
+                      />
+                    )}
                 </PieChart>
               </ResponsiveContainer>
             </div>
