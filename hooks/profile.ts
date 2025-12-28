@@ -4,12 +4,15 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import type { User, ProfileForm, PasswordForm } from "@/types/type";
+import { API_URL } from '@/lib/constants';
 
 export const useProfile = () => {
   const router = useRouter();
+
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
+
   const [form, setForm] = useState<ProfileForm>({
     user_name: "",
     email: "",
@@ -21,15 +24,12 @@ export const useProfile = () => {
     date_of_birth: "",
     gender: "",
   });
+
   const [passwordForm, setPasswordForm] = useState<PasswordForm>({
     oldPassword: "",
     password: "",
     confirmPassword: "",
   });
-
-  useEffect(() => {
-    fetchUserProfile();
-  }, []);
 
   const getToken = () => {
     return document.cookie
@@ -47,8 +47,13 @@ export const useProfile = () => {
     }
   };
 
+  useEffect(() => {
+    fetchUserProfile();
+  }, []);
+
   const fetchUserProfile = async () => {
     const token = getToken();
+
     if (!token) {
       alert("Please login first!");
       router.push("/login");
@@ -62,11 +67,17 @@ export const useProfile = () => {
     }
 
     try {
-      const response = await axios.get(`http://localhost:4000/users/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get(
+        `${API_URL}/users/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       const userData = response.data.user;
+
       setUser(userData);
       setForm({
         user_name: userData.user_name || "",
@@ -76,22 +87,31 @@ export const useProfile = () => {
         profile_photo: userData.profile_photo || "",
         city: userData.city || "",
         country: userData.country || "",
-        date_of_birth: userData.date_of_birth ? userData.date_of_birth.split("T")[0] : "",
+        date_of_birth: userData.date_of_birth
+          ? userData.date_of_birth.split("T")[0]
+          : "",
         gender: userData.gender || "",
       });
-      setLoading(false);
     } catch (error: any) {
       alert(error.response?.data?.message || "Error fetching profile");
+    } finally {
       setLoading(false);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPasswordForm({ ...passwordForm, [e.target.name]: e.target.value });
+  const handlePasswordChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setPasswordForm({
+      ...passwordForm,
+      [e.target.name]: e.target.value,
+    });
   };
 
   const handleUpdate = async () => {
@@ -100,10 +120,15 @@ export const useProfile = () => {
 
     try {
       await axios.put(
-        `http://localhost:4000/users/update/${user.user_id}`,
+        `${API_URL}/users/update/${user.user_id}`,
         form,
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
+
       alert("Profile updated successfully!");
       setEditing(false);
       fetchUserProfile();
@@ -123,15 +148,24 @@ export const useProfile = () => {
 
     try {
       await axios.post(
-        "http://localhost:4000/users/update-password",
+        `${API_URL}/users/update-password`,
         {
           oldPassword: passwordForm.oldPassword,
           password: passwordForm.password,
         },
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
+
       alert("Password updated successfully!");
-      setPasswordForm({ oldPassword: "", password: "", confirmPassword: "" });
+      setPasswordForm({
+        oldPassword: "",
+        password: "",
+        confirmPassword: "",
+      });
     } catch (error: any) {
       alert(error.response?.data?.message || "Error updating password");
     }

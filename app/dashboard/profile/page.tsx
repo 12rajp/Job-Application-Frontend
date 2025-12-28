@@ -1,14 +1,16 @@
 "use client";
 
+import { useRef } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Camera, Mail, Phone, MapPin, Calendar, Lock, Save, ArrowLeft } from "lucide-react";
+import { Camera,Mail,Phone,MapPin,Calendar,Save,} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useProfile } from "@/hooks/profile";
+import SecurityTab from "@/components/profile/SecuritySection";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -25,6 +27,8 @@ export default function ProfilePage() {
     handlePasswordUpdate,
   } = useProfile();
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -36,7 +40,11 @@ export default function ProfilePage() {
   if (!user) return null;
 
   const initials = user.full_name
-    ? user.full_name.split(" ").map(n => n[0]).join("").toUpperCase()
+    ? user.full_name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
     : user.user_name.substring(0, 2).toUpperCase();
 
   return (
@@ -51,16 +59,47 @@ export default function ProfilePage() {
             <div className="flex flex-col items-center">
               <div className="relative">
                 <Avatar className="h-32 w-32">
-                  <AvatarImage src={form.profile_photo} />
-                  <AvatarFallback className="text-2xl bg-blue-100 text-blue-600">{initials}</AvatarFallback>
+                  <AvatarImage src={form.profile_photo || undefined} />
+                  <AvatarFallback className="text-2xl bg-blue-100 text-blue-600">
+                    {initials}
+                  </AvatarFallback>
                 </Avatar>
+
                 {editing && (
-                  <button className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition">
-                    <Camera className="w-4 h-4" />
-                  </button>
+                  <>
+                    <button
+                      type="button"
+                      className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition cursor-pointer"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <Camera className="w-4 h-4" />
+                    </button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        const reader = new FileReader();
+                        reader.onload = () =>
+                          handleChange({
+                            target: {
+                              name: "profile_photo",
+                              value: reader.result,
+                            },
+                          } as any);
+                        reader.readAsDataURL(file);
+                      }}
+                    />
+                  </>
                 )}
               </div>
-              <h2 className="mt-4 text-xl font-semibold text-gray-800">{user.full_name || user.user_name}</h2>
+
+              <h2 className="mt-4 text-xl font-semibold text-gray-800">
+                {user.full_name || user.user_name}
+              </h2>
               <p className="text-sm text-gray-500">@{user.user_name}</p>
 
               <div className="mt-6 w-full space-y-3">
@@ -77,40 +116,55 @@ export default function ProfilePage() {
                 {(user.city || user.country) && (
                   <div className="flex items-center gap-3 text-sm text-gray-600">
                     <MapPin className="w-4 h-4" />
-                    <span>{[user.city, user.country].filter(Boolean).join(", ")}</span>
+                    <span>
+                      {[user.city, user.country].filter(Boolean).join(", ")}
+                    </span>
                   </div>
                 )}
                 <div className="flex items-center gap-3 text-sm text-gray-600">
                   <Calendar className="w-4 h-4" />
-                  <span>Joined {new Date(user.createdAt).toLocaleDateString()}</span>
+                  <span>
+                    Joined {new Date(user.createdAt).toLocaleDateString()}
+                  </span>
                 </div>
               </div>
             </div>
           </CardContent>
         </Card>
-
         <div className="md:col-span-2">
           <Tabs defaultValue="profile" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="profile">Profile Information</TabsTrigger>
               <TabsTrigger value="security">Security</TabsTrigger>
             </TabsList>
-
             <TabsContent value="profile">
               <Card>
                 <CardHeader>
                   <div className="flex justify-between items-center">
                     <CardTitle>Personal Information</CardTitle>
                     {!editing ? (
-                      <Button onClick={() => setEditing(true)} size="sm">
+                      <Button
+                        onClick={() => setEditing(true)}
+                        size="sm"
+                        className="cursor-pointer"
+                      >
                         Edit Profile
                       </Button>
                     ) : (
                       <div className="flex gap-2">
-                        <Button onClick={handleUpdate} size="sm" className="flex items-center gap-1">
+                        <Button
+                          onClick={handleUpdate}
+                          size="sm"
+                          className="flex items-center gap-1 cursor-pointer"
+                        >
                           <Save className="w-4 h-4" /> Save
                         </Button>
-                        <Button onClick={() => setEditing(false)} variant="outline" size="sm">
+                        <Button
+                          onClick={() => setEditing(false)}
+                          variant="outline"
+                          size="sm"
+                          className="cursor-pointer"
+                        >
                           Cancel
                         </Button>
                       </div>
@@ -126,16 +180,18 @@ export default function ProfilePage() {
                         value={form.user_name}
                         onChange={handleChange}
                         disabled={!editing}
+                        className="mt-1"
                       />
                     </div>
                     <div>
                       <Label>Email</Label>
                       <Input
                         name="email"
+                        type="email"
                         value={form.email}
                         onChange={handleChange}
                         disabled={!editing}
-                        type="email"
+                        className="mt-1"
                       />
                     </div>
                   </div>
@@ -147,6 +203,7 @@ export default function ProfilePage() {
                       value={form.full_name}
                       onChange={handleChange}
                       disabled={!editing}
+                      className="mt-1"
                     />
                   </div>
 
@@ -158,6 +215,7 @@ export default function ProfilePage() {
                         value={form.phone}
                         onChange={handleChange}
                         disabled={!editing}
+                        className="mt-1"
                       />
                     </div>
                     <div>
@@ -167,7 +225,7 @@ export default function ProfilePage() {
                         value={form.gender}
                         onChange={handleChange}
                         disabled={!editing}
-                        className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:bg-gray-100"
+                        className="w-full border rounded px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:bg-gray-100"
                       >
                         <option value="">Select Gender</option>
                         <option value="MALE">Male</option>
@@ -185,6 +243,7 @@ export default function ProfilePage() {
                         value={form.city}
                         onChange={handleChange}
                         disabled={!editing}
+                        className="mt-1"
                       />
                     </div>
                     <div>
@@ -194,6 +253,7 @@ export default function ProfilePage() {
                         value={form.country}
                         onChange={handleChange}
                         disabled={!editing}
+                        className="mt-1"
                       />
                     </div>
                   </div>
@@ -206,6 +266,7 @@ export default function ProfilePage() {
                       value={form.date_of_birth}
                       onChange={handleChange}
                       disabled={!editing}
+                      className="mt-1"
                     />
                   </div>
 
@@ -217,54 +278,19 @@ export default function ProfilePage() {
                         value={form.profile_photo}
                         onChange={handleChange}
                         placeholder="https://example.com/photo.jpg"
+                        className="mt-1"
                       />
                     </div>
                   )}
                 </CardContent>
               </Card>
             </TabsContent>
-
             <TabsContent value="security">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Lock className="w-5 h-5" />
-                    Change Password
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label>Current Password</Label>
-                    <Input
-                      name="oldPassword"
-                      type="password"
-                      value={passwordForm.oldPassword}
-                      onChange={handlePasswordChange}
-                    />
-                  </div>
-                  <div>
-                    <Label>New Password</Label>
-                    <Input
-                      name="password"
-                      type="password"
-                      value={passwordForm.password}
-                      onChange={handlePasswordChange}
-                    />
-                  </div>
-                  <div>
-                    <Label>Confirm New Password</Label>
-                    <Input
-                      name="confirmPassword"
-                      type="password"
-                      value={passwordForm.confirmPassword}
-                      onChange={handlePasswordChange}
-                    />
-                  </div>
-                  <Button onClick={handlePasswordUpdate} className="w-full">
-                    Update Password
-                  </Button>
-                </CardContent>
-              </Card>
+              <SecurityTab
+                passwordForm={passwordForm}
+                handlePasswordChange={handlePasswordChange}
+                handlePasswordUpdate={handlePasswordUpdate}
+              />
             </TabsContent>
           </Tabs>
         </div>

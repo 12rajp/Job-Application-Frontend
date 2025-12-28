@@ -117,3 +117,13 @@ export interface SignupData {
   email: string;
   password: string;
 }
+
+export interface SecurityTabProps {
+  passwordForm: {
+    oldPassword: string;
+    password: string;
+    confirmPassword: string;
+  };
+  handlePasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handlePasswordUpdate: () => void;
+}
