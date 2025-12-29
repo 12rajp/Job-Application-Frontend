@@ -83,20 +83,6 @@ export interface PasswordForm {
   confirmPassword: string;
 }
 
-export interface Reminder {
-  rem_id: number;
-  reminder_at: string;
-  method: "EMAIL" | "INAPP" | "BOTH";
-  message: string;
-  is_sent: boolean;
-  application: {
-    position_title: string;
-    company: {
-      company_name: string;
-    };
-  };
-}
-
 export type AnalyticsData = {
   status_id: number;
   status_name: string;
@@ -127,4 +113,33 @@ export interface SecurityTabProps {
   handlePasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handlePasswordUpdate: () => void;
    handleDeleteAccount: () => void;
+}
+
+export interface Application {
+  app_id: number;
+  position_title: string;
+  company: {
+    company_name: string;
+  };
+}
+
+export interface Reminder {
+  rem_id: number;
+  app_id: number;
+  reminder_at: string;
+  message: string;
+  method: string;
+  is_sent: boolean;
+  application: Application;
+}
+
+export interface ReminderFormData {
+  app_id: string;
+  reminder_at: string;
+  message: string;
+}
+
+export interface EditReminderFormData {
+  reminder_at: string;
+  message: string;
 }

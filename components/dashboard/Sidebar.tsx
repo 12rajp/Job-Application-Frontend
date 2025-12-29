@@ -1,5 +1,5 @@
 "use client";
-import { LayoutDashboard, FileText, PlusCircle, User, Folder, LogOut, Bell } from "lucide-react";
+import { LayoutDashboard, FileText, PlusCircle, User, Folder, LogOut, Bell, PieChart } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -37,9 +37,9 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
           <SidebarItem icon={FileText} label="Applications" href="/dashboard/applications" active={pathname === "/dashboard/applications"} />
           <SidebarItem icon={PlusCircle} label="Add Application" href="/dashboard/add-application" active={pathname === "/dashboard/add-application"} />
           <SidebarItem icon={Folder} label="Documents" href="/dashboard/documents" active={pathname === "/dashboard/documents"} />
-          <SidebarItem icon={User} label="Profile" href="/dashboard/profile" active={pathname === "/dashboard/profile"} />
           <SidebarItem icon={Bell} label="Reminders" href="/dashboard/reminders" active={pathname === "/dashboard/reminders"} />
-          <SidebarItem icon={Bell} label="Analytics" href="/dashboard/analytics" active={pathname === "/dashboard/analytics"} />
+          <SidebarItem icon={PieChart} label="Analytics" href="/dashboard/analytics" active={pathname === "/dashboard/analytics"} />
+          <SidebarItem icon={User} label="Profile" href="/dashboard/profile" active={pathname === "/dashboard/profile"} />
           <div onClick={handleLogout}>
             <SidebarItem icon={LogOut} label="Logout" />
           </div>

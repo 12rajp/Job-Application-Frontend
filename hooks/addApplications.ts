@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Company, Status, ApplicationForm } from "@/types/type";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+import { API_URL } from '@/lib/constants';
 
 export const useAddApplication = () => {
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -15,7 +14,7 @@ export const useAddApplication = () => {
 
   const fetchCompanies = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/companies`);
+      const res = await axios.get(`${API_URL}/companies`);
       setCompanies(res.data?.data || res.data || []);
     } catch (error) {
       console.error("Error fetching companies", error);
@@ -24,7 +23,7 @@ export const useAddApplication = () => {
   };
   const fetchStatuses = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/status`);
+      const res = await axios.get(`${API_URL}/status`);
       setStatuses(res.data?.data || res.data || []);
     } catch (error) {
       console.error("Error fetching statuses", error);
@@ -43,7 +42,7 @@ export const useAddApplication = () => {
 
     try {
       await axios.post(
-        `${API_BASE_URL}/job-applications`,
+        `${API_URL}/job-applications`,
         {
           ...form,
           company_id: Number(form.company_id),
