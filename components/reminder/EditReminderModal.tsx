@@ -1,31 +1,7 @@
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { format } from "date-fns";
-
-interface EditReminderModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (reminderId: number, data: any) => void;
-  reminder: {
-    rem_id: number;
-    app_id: number;
-    reminder_at: string;
-    message: string;
-    application: {
-      position_title: string;
-      company: {
-        company_name: string;
-      };
-    };
-  } | null;
-  applications: Array<{
-    app_id: number;
-    position_title: string;
-    company: {
-      company_name: string;
-    };
-  }>;
-}
+import { EditReminderModalProps } from "@/types/type";
 
 export function EditReminderModal({ isOpen, onClose, onSubmit, reminder, applications }: EditReminderModalProps) {
   const [formData, setFormData] = useState({
@@ -61,7 +37,7 @@ export function EditReminderModal({ isOpen, onClose, onSubmit, reminder, applica
           <h2 className="text-xl font-bold text-gray-900">Edit Reminder</h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors"
+            className="text-gray-500 hover:text-gray-700 transition-colors cursor-pointer"
           >
             <X className="h-6 w-6" />
           </button>
@@ -83,7 +59,7 @@ export function EditReminderModal({ isOpen, onClose, onSubmit, reminder, applica
               required
               value={formData.reminder_at}
               onChange={(e) => setFormData({ ...formData, reminder_at: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer"
             />
           </div>
 
@@ -96,7 +72,7 @@ export function EditReminderModal({ isOpen, onClose, onSubmit, reminder, applica
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
               rows={3}
               placeholder="Add a note for this reminder..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none cursor-text"
             />
           </div>
 
@@ -104,13 +80,13 @@ export function EditReminderModal({ isOpen, onClose, onSubmit, reminder, applica
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+              className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium cursor-pointer"
             >
               Update Reminder
             </button>

@@ -143,3 +143,24 @@ export interface EditReminderFormData {
   reminder_at: string;
   message: string;
 }
+
+export interface AddReminderModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (data: { app_id: string; reminder_at: string; message: string }) => void;
+  applications: Application[];
+}
+
+export interface EditReminderModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (reminderId: number, data: { reminder_at: string; message: string }) => void;
+  reminder: Reminder | null;
+  applications: Application[];
+}
+
+export interface ReminderCardProps {
+  reminder: Reminder;
+  onEdit: () => void;
+  onDelete: () => void;
+}

@@ -1,18 +1,6 @@
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
-
-interface AddReminderModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (data: any) => void;
-  applications: Array<{
-    app_id: number;
-    position_title: string;
-    company: {
-      company_name: string;
-    };
-  }>;
-}
+import { AddReminderModalProps } from "@/types/type";
 
 export function AddReminderModal({ isOpen, onClose, onSubmit, applications }: AddReminderModalProps) {
   const [formData, setFormData] = useState({
@@ -45,7 +33,7 @@ export function AddReminderModal({ isOpen, onClose, onSubmit, applications }: Ad
           <h2 className="text-xl font-bold text-gray-900">Add Reminder</h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors"
+            className="text-gray-500 hover:text-gray-700 transition-colors cursor-pointer"
           >
             <X className="h-6 w-6" />
           </button>
@@ -65,7 +53,7 @@ export function AddReminderModal({ isOpen, onClose, onSubmit, applications }: Ad
                 required
                 value={formData.app_id}
                 onChange={(e) => setFormData({ ...formData, app_id: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer"
               >
                 <option value="">Select an application</option>
                 {applications.map((app) => (
@@ -86,7 +74,7 @@ export function AddReminderModal({ isOpen, onClose, onSubmit, applications }: Ad
               required
               value={formData.reminder_at}
               onChange={(e) => setFormData({ ...formData, reminder_at: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer"
             />
           </div>
 
@@ -99,7 +87,7 @@ export function AddReminderModal({ isOpen, onClose, onSubmit, applications }: Ad
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
               rows={3}
               placeholder="Add a note for this reminder..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none cursor-text"
             />
           </div>
 
@@ -107,13 +95,13 @@ export function AddReminderModal({ isOpen, onClose, onSubmit, applications }: Ad
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+              className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium cursor-pointer"
             >
               Add Reminder
             </button>
