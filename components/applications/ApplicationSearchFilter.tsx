@@ -5,29 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue,} from "@/components/ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import {Popover,PopoverContent,PopoverTrigger,} from "@/components/ui/popover";
 import { Search, Filter, X, Calendar } from "lucide-react";
-import { Application, Company, Status } from "@/types/type";
-
-interface FilterState {
-  keyword: string;
-  company: string;
-  status: string;
-  dateFrom: string;
-  dateTo: string;
-  jobType: string;
-}
-
-interface ApplicationSearchFilterProps {
-  applications: Application[];
-  companies: Company[];
-  statuses: Status[];
-  onFilteredResults: (filtered: Application[]) => void;
-}
+import { FilterState, ApplicationSearchFilterProps } from "@/types/type";
 
 export default function ApplicationSearchFilter({
   applications,

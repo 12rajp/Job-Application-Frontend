@@ -164,3 +164,19 @@ export interface ReminderCardProps {
   onEdit: () => void;
   onDelete: () => void;
 }
+
+export interface FilterState {
+  keyword: string;
+  company: string;
+  status: string;
+  dateFrom: string;
+  dateTo: string;
+  jobType: string;
+}
+
+export interface ApplicationSearchFilterProps {
+  applications: Application[];
+  companies: Company[];
+  statuses: Status[];
+  onFilteredResults: (filtered: Application[]) => void;
+}
