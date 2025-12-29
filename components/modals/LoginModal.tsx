@@ -28,7 +28,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     const result = await login({ identifier, password });
 
     if (!result.success) {
-      setMessage(result.message || "Login failed");
+      setMessage(result.message || "Something Wrong");
     } else {
       setMessage("Login successful! Redirecting...");
       setTimeout(() => {

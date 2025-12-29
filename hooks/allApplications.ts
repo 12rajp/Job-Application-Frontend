@@ -1,5 +1,8 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { Application, Company, Status } from "@/types/type";
+import { API_URL } from '@/lib/constants';
 
 export const allApplications = () => {
   const [applications, setApplications] = useState<Application[]>([]);
@@ -19,13 +22,13 @@ export const allApplications = () => {
     if (!token) return null;
 
     try {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
       const jsonPayload = decodeURIComponent(
         atob(base64)
-          .split('')
-          .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-          .join('')
+          .split("")
+          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+          .join("")
       );
       const payload = JSON.parse(jsonPayload);
       return payload.userId || payload.id || payload.user_id;
@@ -47,7 +50,7 @@ export const allApplications = () => {
   const fetchApplications = async (uid: number) => {
     const token = getToken();
     try {
-      const res = await fetch(`http://localhost:4000/job-applications/${uid}`, {
+      const res = await fetch(`${API_URL}/job-applications/${uid}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -60,7 +63,7 @@ export const allApplications = () => {
 
   const fetchCompanies = async () => {
     try {
-      const res = await fetch("http://localhost:4000/companies");
+      const res = await fetch(`${API_URL}/companies`);
       const data = await res.json();
       setCompanies(data.data || []);
     } catch (error) {
@@ -70,7 +73,7 @@ export const allApplications = () => {
 
   const fetchStatuses = async () => {
     try {
-      const res = await fetch("http://localhost:4000/status");
+      const res = await fetch(`${API_URL}/status`);
       const data = await res.json();
       setStatuses(data.data || []);
     } catch (error) {
@@ -82,7 +85,7 @@ export const allApplications = () => {
     if (!confirm("Are you sure you want to delete this application?")) return;
     const token = getToken();
     try {
-      const res = await fetch(`http://localhost:4000/job-applications/${appId}`, {
+      const res = await fetch(`${API_URL}/job-applications/${appId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -99,7 +102,7 @@ export const allApplications = () => {
   const updateApplication = async (appId: number, updateData: any) => {
     const token = getToken();
     try {
-      const res = await fetch(`http://localhost:4000/job-applications/${appId}`, {
+      const res = await fetch(`${API_URL}/job-applications/${appId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
