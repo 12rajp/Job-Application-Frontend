@@ -4,6 +4,7 @@ import { Plus, AlertCircle } from "lucide-react";
 import { ReminderCard } from "@/components/reminder/ReminderCard";
 import { AddReminderModal } from "@/components/reminder/AddReminderModal";
 import { EditReminderModal } from "@/components/reminder/EditReminderModal";
+import { ReminderPagination } from "@/components/reminder/ReminderPagination";
 import { useReminder } from "@/hooks/reminder";
 
 export default function RemindersPage() {
@@ -21,6 +22,10 @@ export default function RemindersPage() {
     handleEditReminder,
     handleDeleteReminder,
     openEditModal,
+    currentPage,
+    totalPages,
+    total,
+    handlePageChange,
   } = useReminder();
 
   if (loading) {
@@ -39,7 +44,7 @@ export default function RemindersPage() {
             Reminders
           </h1>
           <p className="text-gray-600 mt-1">
-            Manage your application reminders
+            Manage your application reminders {total > 0 && `(${total} total)`}
           </p>
         </div>
         <button
@@ -62,16 +67,24 @@ export default function RemindersPage() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {reminders.map((reminder) => (
-            <ReminderCard
-              key={reminder.rem_id}
-              reminder={reminder}
-              onEdit={() => openEditModal(reminder)}
-              onDelete={() => handleDeleteReminder(reminder.rem_id)}
-            />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {reminders.map((reminder) => (
+              <ReminderCard
+                key={reminder.rem_id}
+                reminder={reminder}
+                onEdit={() => openEditModal(reminder)}
+                onDelete={() => handleDeleteReminder(reminder.rem_id)}
+              />
+            ))}
+          </div>
+
+          <ReminderPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </>
       )}
 
       <AddReminderModal

@@ -14,6 +14,11 @@ export const useReminder = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedReminder, setSelectedReminder] = useState<Reminder | null>(null);
+  
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
+  const limit = 5; 
 
   const getToken = () => {
     return document.cookie
@@ -33,7 +38,7 @@ export const useReminder = () => {
     
     fetchReminders();
     fetchApplications();
-  }, []);
+  }, [currentPage]); 
 
   useEffect(() => {
     if (!loading) {
@@ -43,7 +48,7 @@ export const useReminder = () => {
 
       return () => clearInterval(interval);
     }
-  }, [loading]);
+  }, [loading, currentPage]);
 
   const fetchReminders = async () => {
     try {
@@ -54,12 +59,15 @@ export const useReminder = () => {
         return;
       }
 
-      const response = await fetch(`${API_URL}/reminders`, {
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        `${API_URL}/reminders?page=${currentPage}&limit=${limit}`,
+        {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (response.status === 401) {
         toast.error("Session expired. Please login again.");
@@ -74,6 +82,8 @@ export const useReminder = () => {
 
       const data = await response.json();
       setReminders(data.data || []);
+      setTotalPages(data.totalPages || 1);
+      setTotal(data.total || 0);
     } catch (error) {
       console.error("Fetch reminders error:", error);
       toast.error("Failed to fetch reminders");
@@ -145,6 +155,7 @@ export const useReminder = () => {
 
       if (response.ok) {
         toast.success("Reminder added successfully!");
+        setCurrentPage(1);
         fetchReminders();
         setIsAddModalOpen(false);
       } else {
@@ -227,7 +238,12 @@ export const useReminder = () => {
 
       if (response.ok) {
         toast.success("Reminder deleted successfully!");
-        fetchReminders();
+        
+        if (reminders.length === 1 && currentPage > 1) {
+          setCurrentPage(currentPage - 1);
+        } else {
+          fetchReminders();
+        }
       } else {
         const error = await response.json();
         toast.error(error.message || "Failed to delete reminder");
@@ -239,8 +255,20 @@ export const useReminder = () => {
   };
 
   const openEditModal = (reminder: Reminder) => {
+    if (reminder.is_sent) {
+      toast.warning("Reminder Already Sent", {
+        description: "Editing will reschedule this reminder.",
+        duration: 4000,
+      });
+    }
+    
     setSelectedReminder(reminder);
     setIsEditModalOpen(true);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return {
@@ -257,5 +285,9 @@ export const useReminder = () => {
     handleEditReminder,
     handleDeleteReminder,
     openEditModal,
+    currentPage,
+    totalPages,
+    total,
+    handlePageChange,
   };
 };
