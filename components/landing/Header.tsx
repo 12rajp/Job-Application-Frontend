@@ -1,38 +1,28 @@
 'use client';
 
-import { useState } from "react";
 import { Briefcase } from "lucide-react";
-import LoginModal from "@/components/modals/LoginModal";
-import SignupModal from "@/components/modals/SignupModal";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [isSignupOpen, setIsSignupOpen] = useState(false);
+  const router = useRouter();
 
   return (
-    <>
-      <header className="container mx-auto px-4 py-6 flex flex-col sm:flex-row gap-4 sm:gap-0 justify-between items-center">
-        <div className="flex items-center gap-2">
-          <Briefcase className="w-7 h-7 text-blue-400" />
-          <span className="text-xl font-bold">Job Tracker</span>
-        </div>
-        <div className="flex gap-3">
-          <Button
-            onClick={() => setIsLoginOpen(true)}
-            className=" bg-blue-600 hover:bg-blue-700 cursor-pointer  transition-colors duration-300  ">Login
-          </Button>
+    <header className="container mx-auto px-4 py-6 flex justify-between items-center">
+      <div className="flex items-center gap-2">
+        <Briefcase className="w-7 h-7 text-blue-400" />
+        <span className="text-xl font-bold">Job Tracker</span>
+      </div>
 
-          <Button
-            onClick={() => setIsSignupOpen(true)}
-            className=" bg-blue-600 hover:bg-blue-700 cursor-pointer  transition-colors duration-300">
-            Sign Up
-          </Button>
-        </div>
-      </header>
+      <div className="flex gap-3">
+        <Button onClick={() => router.push("/login")}>
+          Login
+        </Button>
 
-      <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
-      <SignupModal isOpen={isSignupOpen} onClose={() => setIsSignupOpen(false)} />
-    </>
+        <Button onClick={() => router.push("/signup")}>
+          Sign Up
+        </Button>
+      </div>
+    </header>
   );
 }

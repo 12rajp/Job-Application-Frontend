@@ -5,17 +5,17 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get('token')?.value;
   const { pathname } = request.nextUrl;
 
-  if (pathname.startsWith('/dashboard') && !token) {
-    return NextResponse.redirect(new URL('/login', request.url));
+  if (token && (pathname === '/' || pathname === '/login' || pathname === '/signup')) {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
-  if ((pathname === '/login' || pathname === '/signup') && token) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+  if (!token && pathname.startsWith('/dashboard')) {
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/login', '/signup'],
+  matcher: ['/', '/dashboard/:path*', '/login', '/signup'],
 };

@@ -208,11 +208,11 @@ export default function AllApplicationsPage() {
                 </div>
                 <div>
                   <Label className="font-semibold">Job Type</Label>
-                  <p className="text-gray-700">{selectedApp.job_type || "N/A"}</p>
+                  <p className="text-gray-700">{selectedApp.job_type || "Null"}</p>
                 </div>
                 <div>
                   <Label className="font-semibold">Location</Label>
-                  <p className="text-gray-700">{selectedApp.location || "N/A"}</p>
+                  <p className="text-gray-700">{selectedApp.location || "Null"}</p>
                 </div>
                 <div>
                   <Label className="font-semibold">Date Applied</Label>
@@ -220,11 +220,11 @@ export default function AllApplicationsPage() {
                 </div>
                 <div>
                   <Label className="font-semibold">Deadline</Label>
-                  <p className="text-gray-700">{selectedApp.application_deadline ? new Date(selectedApp.application_deadline).toLocaleDateString() : "N/A"}</p>
+                  <p className="text-gray-700">{selectedApp.application_deadline ? new Date(selectedApp.application_deadline).toLocaleDateString() : "Null"}</p>
                 </div>
                 <div>
                   <Label className="font-semibold">Salary</Label>
-                  <p className="text-gray-700">{selectedApp.salary_offered || "N/A"}</p>
+                  <p className="text-gray-700">{selectedApp.salary_offered || "Null"}</p>
                 </div>
               </div>
               <div>

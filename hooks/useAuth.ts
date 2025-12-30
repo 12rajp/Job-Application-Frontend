@@ -28,17 +28,24 @@ export function useAuth() {
 
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.message || 'Login failed');
+        throw new Error(errorData.message || errorData.error || 'Login failed');
       }
 
       const data = await res.json();
+      const token = data.token || data.authToken || data.accessToken || data.access_token;
 
-      if (data.token) {
-        document.cookie = `token=${data.token}; path=/; max-age=86400; SameSite=Strict; Secure`;
+      if (token) {
+        document.cookie = `token=${token}; path=/; max-age=86400; SameSite=Lax`;
+        
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        router.refresh();
+        router.push('/dashboard');
+        
+        return { success: true };
+      } else {
+        throw new Error('Login successful but no token received');
       }
-
-      router.push('/dashboard');
-      return { success: true };
     } catch (err: any) {
       setError(err.message);
       return { success: false, message: err.message };
@@ -65,13 +72,12 @@ export function useAuth() {
       }
 
       const responseData = await res.json();
-
-      if (responseData.token) {
-        document.cookie = `token=${responseData.token}; path=/; max-age=86400; SameSite=Strict; Secure`;
-      }
-
-      router.push('/dashboard');
-      return { success: true };
+      return { 
+        success: true, 
+        message: responseData.message,
+        requiresVerification: true 
+      };
+      
     } catch (err: any) {
       setError(err.message);
       return { success: false, message: err.message };
@@ -81,19 +87,22 @@ export function useAuth() {
   };
 
   const logout = async () => {
+    setLoading(true);
+    
     try {
-      
       await fetch(`${API_URL}/users/logout`, {
         method: 'POST',
         credentials: 'include',
       });
     } catch (err) {
-      console.error('Logout error:', err);
-    } finally {
-    
-      document.cookie = 'token=; path=/; max-age=0';
-      router.push('/login');
+      console.error('Logout API error:', err);
     }
+    
+    document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
+    document.cookie = 'token=; path=/; max-age=0; SameSite=Lax';
+    
+    setLoading(false);
+    window.location.href = '/login';
   };
 
   return { login, signup, logout, loading, error };
