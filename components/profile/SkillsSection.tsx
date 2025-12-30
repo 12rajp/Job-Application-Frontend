@@ -1,15 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus } from "lucide-react";
 import type { Skill } from "@/types/type";
-import {Command,CommandGroup,CommandInput,CommandItem,} from "@/components/ui/command";
+import { Command, CommandGroup, CommandInput, CommandItem, CommandList, CommandEmpty } from "@/components/ui/command";
 import { MoreVertical, Pencil, Trash } from "lucide-react";
-import {DropdownMenu,DropdownMenuContent,DropdownMenuItem,DropdownMenuTrigger,} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import axios from "axios";
+import { API_URL } from "@/lib/constants";
 
 interface SkillsSectionProps {
   skills: Skill[];
@@ -30,6 +32,8 @@ export default function SkillsSection({
 }: SkillsSectionProps) {
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [searchResults, setSearchResults] = useState<string[]>([]);
+  const [searching, setSearching] = useState(false);
 
   const [newSkill, setNewSkill] = useState({
     skill_name: "",
@@ -41,6 +45,63 @@ export default function SkillsSection({
     number_of_year: 0,
     category: "",
   });
+
+  const getToken = () => {
+    return document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("token="))
+      ?.split("=")[1];
+  };
+
+  useEffect(() => {
+    setSearchResults(allSkills);
+  }, [allSkills]);
+
+  const handleSearchSkills = async (searchTerm: string) => {
+    setNewSkill({ ...newSkill, skill_name: searchTerm });
+
+    if (!searchTerm.trim()) {
+      setSearchResults(allSkills);
+      return;
+    }
+
+    setSearching(true);
+    const token = getToken();
+    
+    try {
+      const response = await axios.get(
+        `${API_URL}/skills?page=1&limit=10&search=${encodeURIComponent(searchTerm)}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      console.log("Search response:", response.data); 
+
+      const skillsData = response.data.data || response.data.skills || [];
+      console.log("Skills data:", skillsData); 
+      
+      const skillNames = skillsData.map((s: any) => s.skill_name);
+      console.log("Skill names:", skillNames); 
+      
+      if (skillNames.length > 0) {
+        setSearchResults(skillNames);
+      } else {
+        const filtered = allSkills.filter((skill) =>
+          skill.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        setSearchResults(filtered);
+      }
+    } catch (error) {
+      console.error("Error searching skills:", error);
+      const filtered = allSkills.filter((skill) =>
+        skill.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setSearchResults(filtered);
+    } finally {
+      setSearching(false);
+    }
+  };
 
   const handleAdd = () => {
     if (!newSkill.skill_name || newSkill.number_of_year <= 0) {
@@ -92,23 +153,26 @@ export default function SkillsSection({
                 <CommandInput
                   placeholder="Type or select skill..."
                   value={newSkill.skill_name}
-                  onValueChange={(value) =>
-                    setNewSkill({ ...newSkill, skill_name: value })
-                  }
+                  onValueChange={handleSearchSkills}
                 />
-
-                <CommandGroup>
-                  {allSkills.map((skill, idx) => (
-                    <CommandItem
-                      key={idx}
-                      onSelect={() =>
-                        setNewSkill({ ...newSkill, skill_name: skill })
-                      }
-                    >
-                      {skill}
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
+                <CommandList>
+                  <CommandEmpty>
+                    {searching ? "Searching..." : "No skills found. You can type and add a new skill!"}
+                  </CommandEmpty>
+                  <CommandGroup>
+                    {searchResults.map((skill, idx) => (
+                      <CommandItem
+                        key={`${skill}-${idx}`}
+                        value={skill}
+                        onSelect={(value) => {
+                          setNewSkill({ ...newSkill, skill_name: value });
+                        }}
+                      >
+                        {skill}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
               </Command>
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -209,7 +273,7 @@ export default function SkillsSection({
 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                  <button className="p-1 rounded hover:bg-gray-80">
+                    <button className="p-1 rounded hover:bg-gray-80">
                       <MoreVertical className="w-4 h-4 text-gray-600" />
                     </button>
                   </DropdownMenuTrigger>

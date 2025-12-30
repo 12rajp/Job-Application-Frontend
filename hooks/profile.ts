@@ -111,11 +111,12 @@ export const useProfile = () => {
     if (!token) return;
 
     try {
-      const response = await axios.get(`${API_URL}/skills`, {
+      const response = await axios.get(`${API_URL}/skills?limit=10`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       
-      const skillNames = response.data.skills.map((s: any) => s.skill_name);
+      const skillsData = response.data.data || response.data.skills || [];
+      const skillNames = skillsData.map((s: any) => s.skill_name);
       setAllSkills(skillNames);
     } catch (error) {
       console.error("Error fetching all skills:", error);
@@ -129,12 +130,14 @@ export const useProfile = () => {
     setLoadingSkills(true);
     try {
       const response = await axios.get(
-        `${API_URL}/skills/${userId}`,
+        `${API_URL}/skills/${userId}?limit=1000`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      setSkills(response.data.skills || []);
+      
+      const skillsData = response.data.data || response.data.skills || [];
+      setSkills(skillsData);
     } catch (error) {
       console.error("Error fetching skills:", error);
     } finally {
@@ -161,6 +164,7 @@ export const useProfile = () => {
 
       alert("Skill added successfully!");
       await fetchUserSkills(user.user_id);
+      await fetchAllSkills();
     } catch (error: any) {
       alert(error.response?.data?.message || "Error adding skill");
     }
