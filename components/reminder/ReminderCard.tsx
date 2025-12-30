@@ -1,6 +1,7 @@
-import { Calendar, Clock, Briefcase, Edit, Trash2 } from "lucide-react";
+import { Calendar, Clock, Briefcase, Edit, Trash2, MoreVertical } from "lucide-react";
 import { format } from "date-fns";
 import { ReminderCardProps } from "@/types/type";
+import {DropdownMenu,DropdownMenuContent,DropdownMenuItem,DropdownMenuTrigger,} from "@/components/ui/dropdown-menu";
 
 export function ReminderCard({
   reminder,
@@ -41,22 +42,27 @@ export function ReminderCard({
             <span className="line-clamp-1">{companyName}</span>
           </div>
         </div>
-        <div className="flex items-center gap-1.5 ml-3">
-          <button
-            onClick={onEdit}
-            className="p-1.5 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors cursor-pointer"
-            title="Edit"
-          >
-            <Edit className="h-5 w-5" />
-          </button>
-          <button
-            onClick={onDelete}
-            className="p-1.5 bg-red-500 text-white rounded hover:bg-red-600 transition-colors cursor-pointer"
-            title="Delete"
-          >
-            <Trash2 className="h-5 w-5" />
-          </button>
-        </div>
+        
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="p-1.5 hover:bg-gray-100 rounded transition-colors cursor-pointer">
+              <MoreVertical className="h-5 w-5 text-gray-600" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={onEdit} className="cursor-pointer">
+              <Edit className="h-4 w-4 mr-2" />
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem 
+              onClick={onDelete} 
+              className="cursor-pointer text-red-600 focus:text-red-600"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       <div className="space-y-2">
