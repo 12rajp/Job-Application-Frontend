@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Camera, Mail, Phone, MapPin, Calendar, Save } from "lucide-react";
 import { useProfile } from "@/hooks/profile";
 import SecurityTab from "@/components/profile/SecuritySection";
+import SkillsSection from "@/components/profile/SkillsSection";
 
 function ProfilePage() {
   const {
@@ -19,11 +20,17 @@ function ProfilePage() {
     setEditing,
     form,
     passwordForm,
+    skills,
+    allSkills,
+    loadingSkills,
     handleChange,
     handlePasswordChange,
     handleUpdate,
     handlePasswordUpdate,
     handleDeleteAccount,
+    addSkill,
+    updateSkill,
+    deleteSkill,
   } = useProfile();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -51,7 +58,6 @@ function ProfilePage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-gray-800">My Profile</h1>
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="md:col-span-1">
           <CardContent className="pt-6">
@@ -259,16 +265,18 @@ function ProfilePage() {
                     </div>
                   </div>
 
-                  <div>
-                    <Label>Date of Birth</Label>
-                    <Input
-                      name="date_of_birth"
-                      type="date"
-                      value={form.date_of_birth}
-                      onChange={handleChange}
-                      disabled={!editing}
-                      className="mt-1"
-                    />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label>Date of Birth</Label>
+                      <Input
+                        name="date_of_birth"
+                        type="date"
+                        value={form.date_of_birth}
+                        onChange={handleChange}
+                        disabled={!editing}
+                        className="mt-1"
+                      />
+                    </div>
                   </div>
 
                   {editing && (
@@ -285,6 +293,15 @@ function ProfilePage() {
                   )}
                 </CardContent>
               </Card>
+
+              <SkillsSection
+                skills={skills}
+                allSkills={allSkills}
+                loadingSkills={loadingSkills}
+                onAdd={addSkill}
+                onUpdate={updateSkill}
+                onDelete={deleteSkill}
+              />
             </TabsContent>
 
             <TabsContent value="security">

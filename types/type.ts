@@ -180,3 +180,27 @@ export interface ApplicationSearchFilterProps {
   statuses: Status[];
   onFilteredResults: (filtered: Application[]) => void;
 }
+
+export interface Skill {
+  id: number;
+  skill_id: number;
+  user_id: number;
+  number_of_year: number;
+  category: string;
+  skill: {
+    skill_id: number;
+    skill_name: string;
+  };
+}
+
+export interface ProfileForm {
+  user_name: string;
+  email: string;
+  full_name: string;
+  phone: string;
+  profile_photo: string;
+  city: string;
+  country: string;
+  date_of_birth: string;
+  gender: string;
+}
