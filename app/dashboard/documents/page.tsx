@@ -1,7 +1,8 @@
 "use client";
-
-import { Upload, Download, Trash2, FileText } from "lucide-react";
+import { Upload, Download, FileText } from "lucide-react";
 import { useDocuments } from "@/hooks/document";
+import {DropdownMenu,DropdownMenuContent,DropdownMenuItem,DropdownMenuTrigger,} from "@/components/ui/dropdown-menu";
+import { MoreVertical,Trash } from "lucide-react";
 
 export default function DocumentsSection() {
   const {
@@ -149,22 +150,32 @@ export default function DocumentsSection() {
                       {doc.size} KB
                     </td>
                     <td className="px-4 py-4">
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleDownload(doc)}
-                          className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 flex items-center gap-1 cursor-pointer"
-                        >
-                          <Download className="w-4 h-4" />
-                          Download
-                        </button>
-                        <button
-                          onClick={() => handleDelete(doc.doc_id)}
-                          className="px-3 py-1.5 bg-red-600 text-white text-sm rounded hover:bg-red-700 flex items-center gap-1 cursor-pointer"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                          Delete
-                        </button>
-                      </div>
+                      <td className="px-4 py-4 text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <button className="p-2 rounded-md hover:bg-gray-100">
+                              <MoreVertical className="w-4 h-4 text-gray-600" />
+                            </button>
+                          </DropdownMenuTrigger>
+
+                          <DropdownMenuContent align="end" className="w-36">
+                            <DropdownMenuItem
+                              onClick={() => handleDownload(doc)}
+                              className="flex gap-2 cursor-pointer"
+                            >
+                              <Download className="w-4 h-4" />
+                              Download
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => handleDelete(doc.doc_id)}
+                              className="flex gap-2 text-red-600 cursor-pointer focus:text-red-600"
+                            >
+                              <Trash className="w-4 h-4" />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </td>
                     </td>
                   </tr>
                 ))}
