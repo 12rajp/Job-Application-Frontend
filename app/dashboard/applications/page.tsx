@@ -5,12 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Plus, Eye, Pencil, Trash2 } from "lucide-react";
+import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogFooter,} from "@/components/ui/dialog";
+import { Plus } from "lucide-react";
 import { allApplications } from "@/hooks/allApplications";
 import { Application } from "@/types/type";
 import Link from "next/link";
 import ApplicationSearchFilter from "@/components/applications/ApplicationSearchFilter";
+import { MoreVertical, Eye, Pencil, Trash } from "lucide-react";
+import {DropdownMenu,DropdownMenuTrigger,DropdownMenuContent,DropdownMenuItem,} from "@/components/ui/dropdown-menu";
 
 export default function AllApplicationsPage() {
   const {
@@ -23,7 +25,9 @@ export default function AllApplicationsPage() {
     updateApplication,
   } = allApplications();
 
-  const [filteredApplications, setFilteredApplications] = useState<Application[]>([]);
+  const [filteredApplications, setFilteredApplications] = useState<
+    Application[]
+  >([]);
   const [viewModal, setViewModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
@@ -90,7 +94,9 @@ export default function AllApplicationsPage() {
       job_type: editForm.job_type || null,
       date_applied: editForm.date_applied || null,
       application_deadline: editForm.application_deadline || null,
-      salary_offered: editForm.salary_offered ? Number(editForm.salary_offered) : null,
+      salary_offered: editForm.salary_offered
+        ? Number(editForm.salary_offered)
+        : null,
     };
 
     await updateApplication(selectedApp.app_id, updateData);
@@ -129,7 +135,8 @@ export default function AllApplicationsPage() {
         </div>
 
         <div className="mb-4 text-sm text-gray-600">
-          Showing {filteredApplications.length} of {applications.length} applications
+          Showing {filteredApplications.length} of {applications.length}{" "}
+          applications
         </div>
 
         <div className="overflow-x-auto">
@@ -155,28 +162,60 @@ export default function AllApplicationsPage() {
               ) : (
                 filteredApplications.map((app) => (
                   <tr key={app.app_id} className="border-b hover:bg-gray-50">
-                    <td className="p-4 font-medium">{getCompanyName(app.company_id)}</td>
+                    <td className="p-4 font-medium">
+                      {getCompanyName(app.company_id)}
+                    </td>
                     <td className="p-4">{app.position_title}</td>
                     <td className="p-4">
-                      {new Date(app.date_applied).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                      {new Date(app.date_applied).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
                     </td>
                     <td className="p-4">
-                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(getStatusName(app.status_id))}`}>
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
+                          getStatusName(app.status_id)
+                        )}`}
+                      >
                         {getStatusName(app.status_id)}
                       </span>
                     </td>
-                    <td className="p-4">
-                      <div className="flex justify-center gap-2">
-                        <Button size="sm" className="bg-blue-500 hover:bg-blue-600" onClick={() => handleView(app)}>
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                        <Button size="sm" className="bg-green-500 hover:bg-green-600" onClick={() => handleEdit(app)}>
-                          <Pencil className="w-4 h-4" />
-                        </Button>
-                        <Button size="sm" className="bg-red-500 hover:bg-red-600" onClick={() => handleDelete(app.app_id)}>
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
+                    <td className="p-4 text-center">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button className="p-2 rounded hover:bg-gray-100">
+                            <MoreVertical className="w-4 h-4 text-gray-600" />
+                          </button>
+                        </DropdownMenuTrigger>
+
+                        <DropdownMenuContent align="end" className="w-40">
+                          <DropdownMenuItem
+                            onClick={() => handleView(app)}
+                            className="flex gap-2 cursor-pointer"
+                          >
+                            <Eye className="w-4 h-4" />
+                            View
+                          </DropdownMenuItem>
+
+                          <DropdownMenuItem
+                            onClick={() => handleEdit(app)}
+                            className="flex gap-2 cursor-pointer"
+                          >
+                            <Pencil className="w-4 h-4" />
+                            Edit
+                          </DropdownMenuItem>
+
+                          <DropdownMenuItem
+                            onClick={() => handleDelete(app.app_id)}
+                            className="flex gap-2 text-red-600 cursor-pointer focus:text-red-600"
+                          >
+                            <Trash className="w-4 h-4" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </td>
                   </tr>
                 ))
@@ -185,7 +224,6 @@ export default function AllApplicationsPage() {
           </table>
         </div>
       </div>
-
       <Dialog open={viewModal} onOpenChange={setViewModal}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
@@ -196,7 +234,9 @@ export default function AllApplicationsPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label className="font-semibold">Company</Label>
-                  <p className="text-gray-700">{getCompanyName(selectedApp.company_id)}</p>
+                  <p className="text-gray-700">
+                    {getCompanyName(selectedApp.company_id)}
+                  </p>
                 </div>
                 <div>
                   <Label className="font-semibold">Position</Label>
@@ -204,37 +244,60 @@ export default function AllApplicationsPage() {
                 </div>
                 <div>
                   <Label className="font-semibold">Status</Label>
-                  <p className="text-gray-700">{getStatusName(selectedApp.status_id)}</p>
+                  <p className="text-gray-700">
+                    {getStatusName(selectedApp.status_id)}
+                  </p>
                 </div>
                 <div>
                   <Label className="font-semibold">Job Type</Label>
-                  <p className="text-gray-700">{selectedApp.job_type || "Null"}</p>
+                  <p className="text-gray-700">
+                    {selectedApp.job_type || "Null"}
+                  </p>
                 </div>
                 <div>
                   <Label className="font-semibold">Location</Label>
-                  <p className="text-gray-700">{selectedApp.location || "Null"}</p>
+                  <p className="text-gray-700">
+                    {selectedApp.location || "Null"}
+                  </p>
                 </div>
                 <div>
                   <Label className="font-semibold">Date Applied</Label>
-                  <p className="text-gray-700">{new Date(selectedApp.date_applied).toLocaleDateString()}</p>
+                  <p className="text-gray-700">
+                    {new Date(selectedApp.date_applied).toLocaleDateString()}
+                  </p>
                 </div>
                 <div>
                   <Label className="font-semibold">Deadline</Label>
-                  <p className="text-gray-700">{selectedApp.application_deadline ? new Date(selectedApp.application_deadline).toLocaleDateString() : "Null"}</p>
+                  <p className="text-gray-700">
+                    {selectedApp.application_deadline
+                      ? new Date(
+                          selectedApp.application_deadline
+                        ).toLocaleDateString()
+                      : "Null"}
+                  </p>
                 </div>
                 <div>
                   <Label className="font-semibold">Salary</Label>
-                  <p className="text-gray-700">{selectedApp.salary_offered || "Null"}</p>
+                  <p className="text-gray-700">
+                    {selectedApp.salary_offered || "Null"}
+                  </p>
                 </div>
               </div>
               <div>
                 <Label className="font-semibold">Job Description</Label>
-                <p className="text-sm text-gray-600 mt-1">{selectedApp.job_description || "No description available"}</p>
+                <p className="text-sm text-gray-600 mt-1">
+                  {selectedApp.job_description || "No description available"}
+                </p>
               </div>
               {selectedApp.job_link && (
                 <div>
                   <Label className="font-semibold">Job Link</Label>
-                  <a href={selectedApp.job_link} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline block mt-1">
+                  <a
+                    href={selectedApp.job_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:underline block mt-1"
+                  >
                     {selectedApp.job_link}
                   </a>
                 </div>
@@ -252,27 +315,54 @@ export default function AllApplicationsPage() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label>Company</Label>
-              <select value={editForm.company_id} onChange={(e) => setEditForm({ ...editForm, company_id: e.target.value })} className="w-full border rounded px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400">
+              <select
+                value={editForm.company_id}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, company_id: e.target.value })
+                }
+                className="w-full border rounded px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              >
                 {companies.map((c) => (
-                  <option key={c.company_id} value={c.company_id}>{c.company_name}</option>
+                  <option key={c.company_id} value={c.company_id}>
+                    {c.company_name}
+                  </option>
                 ))}
               </select>
             </div>
             <div>
               <Label>Status</Label>
-              <select value={editForm.status_id} onChange={(e) => setEditForm({ ...editForm, status_id: e.target.value })} className="w-full border rounded px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400">
+              <select
+                value={editForm.status_id}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, status_id: e.target.value })
+                }
+                className="w-full border rounded px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              >
                 {statuses.map((s) => (
-                  <option key={s.status_id} value={s.status_id}>{s.status_name}</option>
+                  <option key={s.status_id} value={s.status_id}>
+                    {s.status_name}
+                  </option>
                 ))}
               </select>
             </div>
             <div className="col-span-2">
               <Label>Position Title</Label>
-              <Input value={editForm.position_title} onChange={(e) => setEditForm({ ...editForm, position_title: e.target.value })} />
+              <Input
+                value={editForm.position_title}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, position_title: e.target.value })
+                }
+              />
             </div>
             <div>
               <Label>Job Type</Label>
-              <select value={editForm.job_type} onChange={(e) => setEditForm({ ...editForm, job_type: e.target.value })} className="w-full border rounded px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400">
+              <select
+                value={editForm.job_type}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, job_type: e.target.value })
+                }
+                className="w-full border rounded px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              >
                 <option value="">Select</option>
                 <option value="Onsite">Onsite</option>
                 <option value="Hybrid">Hybrid</option>
@@ -281,32 +371,74 @@ export default function AllApplicationsPage() {
             </div>
             <div>
               <Label>Location</Label>
-              <Input value={editForm.location} onChange={(e) => setEditForm({ ...editForm, location: e.target.value })} />
+              <Input
+                value={editForm.location}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, location: e.target.value })
+                }
+              />
             </div>
             <div>
               <Label>Date Applied</Label>
-              <Input type="date" value={editForm.date_applied} onChange={(e) => setEditForm({ ...editForm, date_applied: e.target.value })} />
+              <Input
+                type="date"
+                value={editForm.date_applied}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, date_applied: e.target.value })
+                }
+              />
             </div>
             <div>
               <Label>Application Deadline</Label>
-              <Input type="date" value={editForm.application_deadline} onChange={(e) => setEditForm({ ...editForm, application_deadline: e.target.value })} />
+              <Input
+                type="date"
+                value={editForm.application_deadline}
+                onChange={(e) =>
+                  setEditForm({
+                    ...editForm,
+                    application_deadline: e.target.value,
+                  })
+                }
+              />
             </div>
             <div>
               <Label>Salary Offered</Label>
-              <Input value={editForm.salary_offered} onChange={(e) => setEditForm({ ...editForm, salary_offered: e.target.value })} />
+              <Input
+                value={editForm.salary_offered}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, salary_offered: e.target.value })
+                }
+              />
             </div>
             <div>
               <Label>Job Link</Label>
-              <Input value={editForm.job_link} onChange={(e) => setEditForm({ ...editForm, job_link: e.target.value })} />
+              <Input
+                value={editForm.job_link}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, job_link: e.target.value })
+                }
+              />
             </div>
             <div className="col-span-2">
               <Label>Job Description</Label>
-              <Textarea value={editForm.job_description} onChange={(e) => setEditForm({ ...editForm, job_description: e.target.value })} />
+              <Textarea
+                value={editForm.job_description}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, job_description: e.target.value })
+                }
+              />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setEditModal(false)}>Cancel</Button>
-            <Button onClick={handleUpdateSubmit} className="bg-blue-600 hover:bg-blue-700">Update Application</Button>
+            <Button variant="outline" onClick={() => setEditModal(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleUpdateSubmit}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              Update Application
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
