@@ -35,6 +35,16 @@ export const useReminder = () => {
     fetchApplications();
   }, []);
 
+  useEffect(() => {
+    if (!loading) {
+      const interval = setInterval(() => {
+        fetchReminders();
+      }, 30000);
+
+      return () => clearInterval(interval);
+    }
+  }, [loading]);
+
   const fetchReminders = async () => {
     try {
       const token = getToken();

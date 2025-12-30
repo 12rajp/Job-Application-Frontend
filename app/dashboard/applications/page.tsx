@@ -115,7 +115,7 @@ export default function AllApplicationsPage() {
 
   return (
     <div className="max-w-6xl mx-auto pt-15 px-8">
-      <div className="bg-white rounded-xl shadow-lg p-8">
+      <div>
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-6 text-center">
           My Applications
         </h1>

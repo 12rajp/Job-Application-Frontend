@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { format } from "date-fns";
+import { toast } from "sonner";
 import { EditReminderModalProps } from "@/types/type";
 
 export function EditReminderModal({ isOpen, onClose, onSubmit, reminder, applications }: EditReminderModalProps) {
@@ -8,6 +9,17 @@ export function EditReminderModal({ isOpen, onClose, onSubmit, reminder, applica
     reminder_at: "",
     message: "",
   });
+
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() + 5);
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
 
   useEffect(() => {
     if (reminder && isOpen) {
@@ -18,13 +30,32 @@ export function EditReminderModal({ isOpen, onClose, onSubmit, reminder, applica
         reminder_at: localDateTime,
         message: reminder.message || "",
       });
+
+      if (reminder.is_sent) {
+        toast.warning("Reminder Already Sent", {
+          description: "Editing will reschedule this reminder.",
+          duration: 4000,
+        });
+      }
     }
   }, [reminder, isOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const selectedTime = new Date(formData.reminder_at);
+    const now = new Date();
+    
+    if (selectedTime <= now) {
+      toast.error("Please select a future date and time");
+      return;
+    }
+    
     if (reminder) {
-      onSubmit(reminder.rem_id, formData);
+      onSubmit(reminder.rem_id, {
+        ...formData,
+        is_sent: false, 
+      });
     }
   };
 
@@ -57,10 +88,14 @@ export function EditReminderModal({ isOpen, onClose, onSubmit, reminder, applica
             <input
               type="datetime-local"
               required
+              min={getCurrentDateTime()} 
               value={formData.reminder_at}
               onChange={(e) => setFormData({ ...formData, reminder_at: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer"
             />
+            <p className="text-xs text-gray-500 mt-1">
+              Select a future time (minimum 5 minutes from now)
+            </p>
           </div>
 
           <div>

@@ -9,6 +9,17 @@ export function AddReminderModal({ isOpen, onClose, onSubmit, applications }: Ad
     message: "",
   });
 
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() + 5);
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
   useEffect(() => {
     if (!isOpen) {
       setFormData({
@@ -21,13 +32,22 @@ export function AddReminderModal({ isOpen, onClose, onSubmit, applications }: Ad
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const selectedTime = new Date(formData.reminder_at);
+    const now = new Date();
+    
+    if (selectedTime <= now) {
+      alert("Please select a future date and time for the reminder.");
+      return;
+    }
+    
     onSubmit(formData);
   };
 
   if (!isOpen) return null;
 
   return (
-       <div className="fixed inset-0 bg-transparent z-50 flex items-center justify-center p-4"> 
+    <div className="fixed inset-0 bg-transparent z-50 flex items-center justify-center p-4"> 
       <div className="bg-white rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
           <h2 className="text-xl font-bold text-gray-900">Add Reminder</h2>
@@ -72,10 +92,14 @@ export function AddReminderModal({ isOpen, onClose, onSubmit, applications }: Ad
             <input
               type="datetime-local"
               required
+              min={getCurrentDateTime()} 
               value={formData.reminder_at}
               onChange={(e) => setFormData({ ...formData, reminder_at: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer"
             />
+            <p className="text-xs text-gray-500 mt-1">
+              Minimum 5 minutes from now
+            </p>
           </div>
 
           <div>

@@ -29,12 +29,13 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
 
       <aside
         className={`
-          fixed top-0 left-0 h-screen w-64 bg-gray-50 border-r p-4 pt-20 z-40
+           fixed top-0 left-0 h-screen w-64 bg-gray-50 border-r p-4 pt-20 z-40
           transform md:translate-x-0 transition-transform
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
         `}
       >
         <nav className="space-y-5">
+          
           <SidebarItem 
             icon={LayoutDashboard} 
             label="Overview" 
