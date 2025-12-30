@@ -120,20 +120,20 @@ export default function AllApplicationsPage() {
           My Applications
         </h1>
 
-        {applications.length > 0 && (
-          <div className="mb-6">
-            <ApplicationSearchFilter
-              applications={applications}
-              companies={companies}
-              statuses={statuses}
-              onFilteredResults={handleFilteredResults}
-            />
-          </div>
-        )}
-
-        <div className="flex justify-end mb-6">
-          <Link href="/dashboard/add-application" className="w-full sm:w-auto">
-            <Button className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 flex items-center gap-2 justify-center">
+        <div className="flex flex-col sm:flex-row gap-4 mb-6 items-start sm:items-center">
+          {applications.length > 0 && (
+            <div className="flex-1 w-full">
+              <ApplicationSearchFilter
+                applications={applications}
+                companies={companies}
+                statuses={statuses}
+                onFilteredResults={handleFilteredResults}
+              />
+            </div>
+          )}
+          
+          <Link href="/dashboard/add-application" className="w-full sm:w-auto shrink-0">
+            <Button className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 flex items-center gap-2 justify-center whitespace-nowrap">
               <Plus className="w-4 h-4" /> Add New Application
             </Button>
           </Link>
