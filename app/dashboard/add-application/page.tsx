@@ -40,13 +40,13 @@ export default function AddApplicationPage() {
   };
 
   const handleSubmit = async () => {
-
     const newErrors: { [key: string]: string } = {};
     if (!form.company_id) newErrors.company_id = "Please select a company";
     if (!form.status_id) newErrors.status_id = "Please select a status";
     if (!form.position_title)
       newErrors.position_title = "Position title is required";
-    if (!form.date_applied) newErrors.date_applied = "Please select date applied";
+    if (!form.date_applied)
+      newErrors.date_applied = "Please select date applied";
     if (!form.job_type) newErrors.job_type = "Please select job type";
 
     if (Object.keys(newErrors).length > 0) {
@@ -56,7 +56,7 @@ export default function AddApplicationPage() {
 
     const success = await addApplication(form);
     if (success) {
-      router.push("/dashboard/applications"); 
+      router.push("/dashboard/applications");
     }
   };
 
@@ -82,6 +82,16 @@ export default function AddApplicationPage() {
               </option>
             ))}
           </select>
+          <div>
+            <div>
+              {errors.company_id && (
+                <p className="text-red-600 text-sm mt-1">{errors.company_id}</p>
+              )}
+            </div>
+            {errors.company_id && (
+              <p className="text-red-600 text-sm mt-1">{errors.company_id}</p>
+            )}
+          </div>
           {errors.company_id && (
             <p className="text-red-600 text-sm mt-1">{errors.company_id}</p>
           )}
@@ -128,7 +138,8 @@ export default function AddApplicationPage() {
             name="position_title"
             value={form.position_title}
             onChange={handleChange}
-            className={focusStyle}/>
+            className={focusStyle}
+          />
           {errors.position_title && (
             <p className="text-red-600 text-sm mt-1">{errors.position_title}</p>
           )}
@@ -139,7 +150,8 @@ export default function AddApplicationPage() {
             name="job_description"
             value={form.job_description}
             onChange={handleChange}
-            className={focusStyle}/>
+            className={focusStyle}
+          />
         </div>
         <div>
           <Label className="mb-2 block">Job Link</Label>
@@ -147,7 +159,8 @@ export default function AddApplicationPage() {
             name="job_link"
             value={form.job_link}
             onChange={handleChange}
-            className={focusStyle}/>
+            className={focusStyle}
+          />
         </div>
         <div>
           <Label className="mb-2 block">Location</Label>
@@ -155,7 +168,8 @@ export default function AddApplicationPage() {
             name="location"
             value={form.location}
             onChange={handleChange}
-            className={focusStyle}/>
+            className={focusStyle}
+          />
         </div>
         <div>
           <Label className="mb-2 block">Date Applied</Label>
@@ -164,7 +178,8 @@ export default function AddApplicationPage() {
             name="date_applied"
             value={form.date_applied}
             onChange={handleChange}
-            className={focusStyle}  />
+            className={focusStyle}
+          />
           {errors.date_applied && (
             <p className="text-red-600 text-sm mt-1">{errors.date_applied}</p>
           )}
@@ -185,13 +200,15 @@ export default function AddApplicationPage() {
             name="salary_offered"
             value={form.salary_offered}
             onChange={handleChange}
-            className={focusStyle} />
+            className={focusStyle}
+          />
         </div>
       </div>
       <div className="flex justify-end mt-10">
         <Button
           onClick={handleSubmit}
-          className="px-10 py-2 bg-[#1A2539] hover:bg-[#24324a] text-white rounded-lg cursor-pointer transition">
+          className="px-10 py-2 bg-[#1A2539] hover:bg-[#24324a] text-white rounded-lg cursor-pointer transition"
+        >
           Submit
         </Button>
       </div>

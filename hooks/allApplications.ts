@@ -4,11 +4,24 @@ import { useState, useEffect } from "react";
 import { Application, Company, Status } from "@/types/type";
 import { API_URL } from '@/lib/constants';
 
+interface PaginationData {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
 export const allApplications = () => {
   const [applications, setApplications] = useState<Application[]>([]);
   const [companies, setCompanies] = useState<Company[]>([]);
   const [statuses, setStatuses] = useState<Status[]>([]);
   const [userId, setUserId] = useState<number | null>(null);
+  const [pagination, setPagination] = useState<PaginationData>({
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 0,
+  });
 
   const getToken = () => {
     return document.cookie
@@ -42,19 +55,28 @@ export const allApplications = () => {
     const id = getUserIdFromToken();
     setUserId(id);
 
-    if (id) fetchApplications(id);
+    if (id) fetchApplications(id, 1, 10);
     fetchCompanies();
     fetchStatuses();
   }, []);
 
-  const fetchApplications = async (uid: number) => {
+  const fetchApplications = async (uid: number, page: number = 1, limit: number = 10) => {
     const token = getToken();
     try {
-      const res = await fetch(`${API_URL}/job-applications/${uid}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetch(
+        `${API_URL}/job-applications/${uid}?page=${page}&limit=${limit}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       const data = await res.json();
       setApplications(data.data || []);
+      setPagination({
+        page: data.page,
+        limit: data.limit,
+        total: data.total,
+        totalPages: data.totalPages,
+      });
     } catch (error) {
       console.error("Error fetching applications:", error);
       alert("Error loading applications. Please try again.");
@@ -120,13 +142,21 @@ export const allApplications = () => {
     }
   };
 
+  const handlePageChange = (newPage: number) => {
+    if (userId) {
+      fetchApplications(userId, newPage, pagination.limit);
+    }
+  };
+
   return {
     applications,
     companies,
     statuses,
     userId,
+    pagination,
     fetchApplications,
     deleteApplication,
     updateApplication,
+    handlePageChange,
   };
 };

@@ -185,6 +185,18 @@ export default function SkillsSection({
                         setEditForm({ ...editForm, category: e.target.value })
                       }
                     />
+                    <div className="flex gap-2 mt-2 col-span-2">
+                      <Button size="sm" onClick={handleUpdate}>
+                        Update
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setEditingId(null)}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
                   </div>
                 ) : (
                   <div className="flex-1">
@@ -194,9 +206,10 @@ export default function SkillsSection({
                     </p>
                   </div>
                 )}
+
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="p-2 rounded hover:bg-gray-100">
+                  <button className="p-1 rounded hover:bg-gray-80">
                       <MoreVertical className="w-4 h-4 text-gray-600" />
                     </button>
                   </DropdownMenuTrigger>

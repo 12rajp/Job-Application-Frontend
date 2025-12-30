@@ -13,6 +13,7 @@ import Link from "next/link";
 import ApplicationSearchFilter from "@/components/applications/ApplicationSearchFilter";
 import { MoreVertical, Eye, Pencil, Trash } from "lucide-react";
 import {DropdownMenu,DropdownMenuTrigger,DropdownMenuContent,DropdownMenuItem,} from "@/components/ui/dropdown-menu";
+import Pagination from "@/components/applications/Pagination";
 
 export default function AllApplicationsPage() {
   const {
@@ -20,22 +21,25 @@ export default function AllApplicationsPage() {
     companies,
     statuses,
     userId,
+    pagination,
     fetchApplications,
     deleteApplication,
     updateApplication,
+    handlePageChange,
   } = allApplications();
 
-  const [filteredApplications, setFilteredApplications] = useState<
-    Application[]
-  >([]);
+  const [filteredApplications, setFilteredApplications] = useState<Application[]>([]);
   const [viewModal, setViewModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
   const [editForm, setEditForm] = useState<any>({});
+  const [isFiltering, setIsFiltering] = useState(false);
 
   useEffect(() => {
-    setFilteredApplications(applications);
-  }, [applications]);
+    if (!isFiltering) {
+      setFilteredApplications(applications);
+    }
+  }, [applications, isFiltering]);
 
   const getCompanyName = (companyId: number) =>
     companies.find((c) => c.company_id === companyId)?.company_name || "Null";
@@ -78,7 +82,7 @@ export default function AllApplicationsPage() {
 
   const handleDelete = async (appId: number) => {
     await deleteApplication(appId);
-    if (userId) fetchApplications(userId);
+    if (userId) fetchApplications(userId, pagination.page, pagination.limit);
   };
 
   const handleUpdateSubmit = async () => {
@@ -94,19 +98,20 @@ export default function AllApplicationsPage() {
       job_type: editForm.job_type || null,
       date_applied: editForm.date_applied || null,
       application_deadline: editForm.application_deadline || null,
-      salary_offered: editForm.salary_offered
-        ? Number(editForm.salary_offered)
-        : null,
+      salary_offered: editForm.salary_offered ? Number(editForm.salary_offered) : null,
     };
 
     await updateApplication(selectedApp.app_id, updateData);
     setEditModal(false);
-    if (userId) fetchApplications(userId);
+    if (userId) fetchApplications(userId, pagination.page, pagination.limit);
   };
 
   const handleFilteredResults = (filtered: Application[]) => {
     setFilteredApplications(filtered);
+    setIsFiltering(filtered.length !== applications.length);
   };
+
+  const displayApplications = isFiltering ? filteredApplications : applications;
 
   return (
     <div className="max-w-6xl mx-auto pt-15 px-8">
@@ -134,11 +139,6 @@ export default function AllApplicationsPage() {
           </Link>
         </div>
 
-        <div className="mb-4 text-sm text-gray-600">
-          Showing {filteredApplications.length} of {applications.length}{" "}
-          applications
-        </div>
-
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead className="bg-gray-100">
@@ -151,7 +151,7 @@ export default function AllApplicationsPage() {
               </tr>
             </thead>
             <tbody>
-              {filteredApplications.length === 0 ? (
+              {displayApplications.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="text-center p-8 text-gray-500">
                     {applications.length === 0
@@ -160,7 +160,7 @@ export default function AllApplicationsPage() {
                   </td>
                 </tr>
               ) : (
-                filteredApplications.map((app) => (
+                displayApplications.map((app) => (
                   <tr key={app.app_id} className="border-b hover:bg-gray-50">
                     <td className="p-4 font-medium">
                       {getCompanyName(app.company_id)}
@@ -223,7 +223,22 @@ export default function AllApplicationsPage() {
             </tbody>
           </table>
         </div>
+
+        {!isFiltering && pagination.totalPages > 1 && (
+          <Pagination
+            currentPage={pagination.page}
+            totalPages={pagination.totalPages}
+            onPageChange={handlePageChange}
+          />
+        )}
+
+        {isFiltering && (
+          <div className="mt-4 text-sm text-gray-600 text-center">
+            Showing {filteredApplications.length} filtered results
+          </div>
+        )}
       </div>
+
       <Dialog open={viewModal} onOpenChange={setViewModal}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
