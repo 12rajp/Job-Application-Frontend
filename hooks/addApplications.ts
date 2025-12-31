@@ -1,16 +1,25 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Company, Status, ApplicationForm } from "@/types/type";
+import { Company, Status, ApplicationForm, Document } from "@/types/type";
 import { API_URL } from '@/lib/constants';
 
 export const useAddApplication = () => {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [statuses, setStatuses] = useState<Status[]>([]);
+  const [documents, setDocuments] = useState<Document[]>([]);
 
   useEffect(() => {
     fetchCompanies();
     fetchStatuses();
+    fetchDocuments();
   }, []);
+
+  const getToken = () => {
+    return document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("token="))
+      ?.split("=")[1];
+  };
 
   const fetchCompanies = async () => {
     try {
@@ -21,6 +30,7 @@ export const useAddApplication = () => {
       setCompanies([]);
     }
   };
+
   const fetchStatuses = async () => {
     try {
       const res = await axios.get(`${API_URL}/status`);
@@ -30,37 +40,81 @@ export const useAddApplication = () => {
       setStatuses([]);
     }
   };
-  const addApplication = async (form: ApplicationForm) => {
-    const token = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("token="))
-      ?.split("=")[1];
 
-    if (!token) {
-      return false; 
-    }
+  const fetchDocuments = async () => {
+    const token = getToken();
+    if (!token) return;
 
     try {
-      await axios.post(
-        `${API_URL}/job-applications`,
-        {
-          ...form,
-          company_id: Number(form.company_id),
-          status_id: Number(form.status_id),
-          salary_offered: form.salary_offered ? Number(form.salary_offered) : null,
+      const res = await axios.get(`${API_URL}/document`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      return true; 
-    } catch (error: any) {
-      console.error("Error adding application", error);
-      return false; 
+      });
+      setDocuments(res.data?.data || []);
+    } catch (error) {
+      console.error("Error fetching documents", error);
+      setDocuments([]);
     }
   };
 
-  return {companies,statuses,addApplication,};
+  const addApplication = async (
+    form: ApplicationForm,
+    selectedDocId?: string,
+    newFile?: File | null
+  ) => {
+    const token = getToken();
+
+    if (!token) {
+      alert("Please login first!");
+      return false;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("company_id", String(form.company_id));
+      formData.append("status_id", String(form.status_id));
+      formData.append("position_title", form.position_title);
+      formData.append("job_type", form.job_type);
+      formData.append("date_applied", form.date_applied);
+      
+      if (form.job_description) formData.append("job_description", form.job_description);
+      if (form.job_link) formData.append("job_link", form.job_link);
+      if (form.location) formData.append("location", form.location);
+      if (form.application_deadline) formData.append("application_deadline", form.application_deadline);
+      if (form.salary_offered) formData.append("salary_offered", String(form.salary_offered));
+
+      if (selectedDocId) {
+        formData.append("doc_id", selectedDocId);
+      } else if (newFile) {
+        formData.append("file", newFile);
+      }
+
+      const response = await axios.post(
+        `${API_URL}/job-applications`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      
+      alert("Application submitted successfully!");
+      return true;
+    } catch (error: any) {
+      console.error("Error adding application", error);
+      const errorMessage = error.response?.data?.message || "Failed to submit application";
+      alert(errorMessage);
+      return false;
+    }
+  };
+
+  return {
+    companies,
+    statuses,
+    documents,
+    addApplication,
+  };
 };

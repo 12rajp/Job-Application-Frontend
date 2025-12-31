@@ -8,13 +8,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAddApplication } from "@/hooks/addApplications";
 import { ApplicationForm } from "@/types/type";
 import { useRouter } from "next/navigation";
+import { Upload, FileText } from "lucide-react";
 
 const focusStyle =
   "focus:outline-none focus:ring-2 focus:ring-[#1A2539] focus:border-[#1A2539] transition-all duration-200";
 
 export default function AddApplicationPage() {
   const router = useRouter();
-  const { companies, statuses, addApplication } = useAddApplication();
+  const { companies, statuses, documents, addApplication } = useAddApplication();
 
   const [form, setForm] = useState<ApplicationForm>({
     company_id: "",
@@ -29,6 +30,10 @@ export default function AddApplicationPage() {
     salary_offered: "",
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  
+  const [selectedDocId, setSelectedDocId] = useState<string>("");
+  const [newFile, setNewFile] = useState<File | null>(null);
+  const [uploadMode, setUploadMode] = useState<"existing" | "new">("existing");
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -37,6 +42,19 @@ export default function AddApplicationPage() {
   ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setErrors((prev) => ({ ...prev, [e.target.name]: "" }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setNewFile(file);
+      setSelectedDocId(""); 
+    }
+  };
+
+  const handleDocumentSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedDocId(e.target.value);
+    setNewFile(null);
   };
 
   const handleSubmit = async () => {
@@ -54,9 +72,19 @@ export default function AddApplicationPage() {
       return;
     }
 
-    const success = await addApplication(form);
+    console.log("Submitting application with:", {
+      form,
+      selectedDocId,
+      newFile: newFile?.name,
+    });
+
+    const success = await addApplication(form, selectedDocId, newFile);
     if (success) {
-      router.push("/dashboard/applications");
+      console.log("Application submitted successfully, redirecting...");
+      setTimeout(() => {
+        router.push("/dashboard/applications");
+        window.location.href = "/dashboard/applications";
+      }, 500);
     }
   };
 
@@ -82,20 +110,11 @@ export default function AddApplicationPage() {
               </option>
             ))}
           </select>
-          <div>
-            <div>
-              {errors.company_id && (
-                <p className="text-red-600 text-sm mt-1">{errors.company_id}</p>
-              )}
-            </div>
-            {errors.company_id && (
-              <p className="text-red-600 text-sm mt-1">{errors.company_id}</p>
-            )}
-          </div>
           {errors.company_id && (
             <p className="text-red-600 text-sm mt-1">{errors.company_id}</p>
           )}
         </div>
+
         <div>
           <Label className="mb-2 block">Status</Label>
           <select
@@ -115,6 +134,7 @@ export default function AddApplicationPage() {
             <p className="text-red-600 text-sm mt-1">{errors.status_id}</p>
           )}
         </div>
+
         <div>
           <Label className="mb-2 block">Job Type</Label>
           <select
@@ -132,6 +152,7 @@ export default function AddApplicationPage() {
             <p className="text-red-600 text-sm mt-1">{errors.job_type}</p>
           )}
         </div>
+
         <div>
           <Label className="mb-2 block">Position Title</Label>
           <Input
@@ -144,6 +165,7 @@ export default function AddApplicationPage() {
             <p className="text-red-600 text-sm mt-1">{errors.position_title}</p>
           )}
         </div>
+
         <div className="md:col-span-2">
           <Label className="mb-2 block">Job Description</Label>
           <Textarea
@@ -153,6 +175,7 @@ export default function AddApplicationPage() {
             className={focusStyle}
           />
         </div>
+
         <div>
           <Label className="mb-2 block">Job Link</Label>
           <Input
@@ -162,6 +185,7 @@ export default function AddApplicationPage() {
             className={focusStyle}
           />
         </div>
+
         <div>
           <Label className="mb-2 block">Location</Label>
           <Input
@@ -171,6 +195,7 @@ export default function AddApplicationPage() {
             className={focusStyle}
           />
         </div>
+
         <div>
           <Label className="mb-2 block">Date Applied</Label>
           <Input
@@ -184,6 +209,7 @@ export default function AddApplicationPage() {
             <p className="text-red-600 text-sm mt-1">{errors.date_applied}</p>
           )}
         </div>
+
         <div>
           <Label className="mb-2 block">Application Deadline</Label>
           <Input
@@ -194,6 +220,7 @@ export default function AddApplicationPage() {
             className={focusStyle}
           />
         </div>
+
         <div>
           <Label className="mb-2 block">Salary Offered</Label>
           <Input
@@ -203,7 +230,86 @@ export default function AddApplicationPage() {
             className={focusStyle}
           />
         </div>
+
+        <div className="md:col-span-2 border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50">
+          <Label className="mb-3 block text-base font-semibold">Attach Resume/Cover Letter</Label>
+      
+          <div className="flex gap-4 mb-4">
+            <button
+              type="button"
+              onClick={() => setUploadMode("existing")}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                uploadMode === "existing"
+                  ? "bg-[#1A2539] text-white"
+                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+              }`}
+            >
+              Select Existing Document
+            </button>
+            <button
+              type="button"
+              onClick={() => setUploadMode("new")}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                uploadMode === "new"
+                  ? "bg-[#1A2539] text-white"
+                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+              }`}
+            >
+              Upload New File
+            </button>
+          </div>
+
+          {uploadMode === "existing" ? (
+            <div>
+              {documents.length > 0 ? (
+                <select
+                  value={selectedDocId}
+                  onChange={handleDocumentSelect}
+                  className={`w-full border rounded px-3 py-2 ${focusStyle}`}
+                >
+                  <option value="">Select a document</option>
+                  {documents.map((doc) => (
+                    <option key={doc.doc_id} value={doc.doc_id}>
+                      {doc.doc_name} ({doc.doc_type})
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <div className="text-center py-4 text-gray-500">
+                  <FileText className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+                  <p className="text-sm">No documents uploaded yet</p>
+                  <p className="text-xs mt-1">Upload documents in the Documents section first</p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3">
+                <Upload className="w-6 h-6 text-blue-600" />
+              </div>
+              <input
+                type="file"
+                onChange={handleFileChange}
+                className="hidden"
+                id="resume-input"
+                accept=".pdf,.doc,.docx"
+              />
+              <label
+                htmlFor="resume-input"
+                className="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
+              >
+                Choose File
+              </label>
+              {newFile && (
+                <p className="mt-2 text-sm text-gray-600">
+                  Selected: <span className="font-medium">{newFile.name}</span>
+                </p>
+              )}
+            </div>
+          )}
+        </div>
       </div>
+
       <div className="flex justify-end mt-10">
         <Button
           onClick={handleSubmit}
