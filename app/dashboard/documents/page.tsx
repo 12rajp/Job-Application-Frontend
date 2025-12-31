@@ -149,7 +149,6 @@ export default function DocumentsSection() {
                     <td className="px-4 py-4 text-sm text-gray-700">
                       {doc.size} KB
                     </td>
-                    <td className="px-4 py-4">
                       <td className="px-4 py-4 text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -176,7 +175,6 @@ export default function DocumentsSection() {
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </td>
-                    </td>
                   </tr>
                 ))}
               </tbody>

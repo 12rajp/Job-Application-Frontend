@@ -34,7 +34,7 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
         `}
       >
-        <nav className="space-y-5">
+        <nav className="space-y-2">
           
           <SidebarItem 
             icon={LayoutDashboard} 
@@ -102,7 +102,7 @@ function SidebarItem({
   href?: string; 
   active?: boolean;
 }) {
-  const baseStyle = "flex items-center gap-5 px-4 py-3.5 rounded-md text-[16px] font-semibold cursor-pointer transition-all duration-200";
+  const baseStyle = "flex items-center gap-5 px-4 py-3 rounded-lg text-[16px] font-semibold cursor-pointer transition-all duration-200 mb-2";
   const activeStyle = "bg-gradient-to-r from-[#0B1220] to-[#16233A] text-white shadow-md";
   const hoverStyle = "hover:bg-gradient-to-r hover:from-[#0B1220] hover:to-[#16233A] hover:text-white";
 

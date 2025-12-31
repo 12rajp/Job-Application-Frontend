@@ -2,17 +2,16 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import { LoginCredentials, SignupData } from '@/types/type';
 import { API_URL } from '@/lib/constants';
 
 export function useAuth() {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const login = async (credentials: LoginCredentials) => {
     setLoading(true);
-    setError(null);
 
     try {
       const res = await fetch(`${API_URL}/users/login`, {
@@ -26,16 +25,19 @@ export function useAuth() {
         }),
       });
 
+      const data = await res.json();
+
       if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || errorData.error || 'Login failed');
+        toast.error(data.message || data.error || 'Login failed');
+        return { success: false, message: data.message || data.error };
       }
 
-      const data = await res.json();
       const token = data.token || data.authToken || data.accessToken || data.access_token;
 
       if (token) {
         document.cookie = `token=${token}; path=/; max-age=86400; SameSite=Lax`;
+        
+        toast.success('Login successful! Redirecting...');
         
         await new Promise(resolve => setTimeout(resolve, 100));
         
@@ -44,10 +46,11 @@ export function useAuth() {
         
         return { success: true };
       } else {
-        throw new Error('Login successful but no token received');
+        toast.error('Login successful but no token received');
+        return { success: false, message: 'No token received' };
       }
     } catch (err: any) {
-      setError(err.message);
+      toast.error(err.message || 'Something went wrong');
       return { success: false, message: err.message };
     } finally {
       setLoading(false);
@@ -56,7 +59,6 @@ export function useAuth() {
 
   const signup = async (data: SignupData) => {
     setLoading(true);
-    setError(null);
 
     try {
       const res = await fetch(`${API_URL}/users/register`, {
@@ -66,12 +68,15 @@ export function useAuth() {
         body: JSON.stringify(data),
       });
 
+      const responseData = await res.json();
+
       if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || 'Registration failed');
+        toast.error(responseData.message || 'Registration failed');
+        return { success: false, message: responseData.message };
       }
 
-      const responseData = await res.json();
+      toast.success(responseData.message || 'Registration successful! Please verify your email.');
+      
       return { 
         success: true, 
         message: responseData.message,
@@ -79,7 +84,7 @@ export function useAuth() {
       };
       
     } catch (err: any) {
-      setError(err.message);
+      toast.error(err.message || 'Something went wrong');
       return { success: false, message: err.message };
     } finally {
       setLoading(false);
@@ -101,9 +106,11 @@ export function useAuth() {
     document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
     document.cookie = 'token=; path=/; max-age=0; SameSite=Lax';
     
+    toast.success('Logged out successfully');
+    
     setLoading(false);
     window.location.href = '/login';
   };
 
-  return { login, signup, logout, loading, error };
+  return { login, signup, logout, loading };
 }

@@ -15,11 +15,11 @@ export default function Header() {
       </div>
 
       <div className="flex gap-3">
-        <Button onClick={() => router.push("/login")}>
+        <Button  className="cursor-pointer bg-[blue] " onClick={() => router.push("/login")}>
           Login
         </Button>
 
-        <Button onClick={() => router.push("/signup")}>
+        <Button className="cursor-pointer bg-[blue]  "  onClick={() => router.push("/signup")}>
           Sign Up
         </Button>
       </div>

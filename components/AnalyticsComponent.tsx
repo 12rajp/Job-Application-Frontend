@@ -86,7 +86,7 @@ export default function AnalyticsComponent({
               <div className="mt-6 text-center">
                 <p className="text-lg text-gray-700">
                   Total Applications:{" "}
-                  <span className="font-bold text-blue-600 text-2xl">
+                  <span className="font-bold text-blue-600 text-1xl">
                     {totalApplications}
                   </span>
                 </p>
