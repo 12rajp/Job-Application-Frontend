@@ -15,7 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={inter.className}>
         {children}
-          <Toaster position="top-center" richColors />
+          <Toaster position="bottom-right" richColors />
         </body>
     </html>
   );

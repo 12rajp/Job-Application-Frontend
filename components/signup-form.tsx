@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import Link from "next/link";
 
 export function SignupForm({ className, ...props }: React.ComponentProps<"form">) {
   const { signup, loading } = useAuth();
@@ -113,7 +114,12 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"form">
         </Field>
         
         <FieldDescription className="text-center text-sm">
-          Already have an account? <a href="/login" className="underline cursor-pointer">Sign in</a>
+          Already have an account? 
+           <Link
+              href="/login"
+          className="underline cursor-pointer">
+              Sign in
+            </Link>
         </FieldDescription>
       </FieldGroup>
     </form>

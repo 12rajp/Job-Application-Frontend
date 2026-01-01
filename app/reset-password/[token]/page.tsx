@@ -105,7 +105,7 @@ export default function ResetPasswordPage() {
             </Field>
 
             <Field>
-              <Button type="submit" disabled={loading} className="w-full">
+              <Button type="submit" disabled={loading} className="w-full cursor-pointer">
                 {loading ? "Resetting..." : "Reset password"}
               </Button>
             </Field>

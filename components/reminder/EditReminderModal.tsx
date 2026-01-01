@@ -62,27 +62,27 @@ export function EditReminderModal({ isOpen, onClose, onSubmit, reminder, applica
   if (!isOpen || !reminder) return null;
 
   return (
-    <div className="fixed inset-0 bg-transparent z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
-          <h2 className="text-xl font-bold text-gray-900">Edit Reminder</h2>
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+      <div className="bg-[#1A2539] rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl">
+        <div className="sticky top-0 bg-[#1A2539] border-b border-white/10 px-6 py-4 flex justify-between items-center">
+          <h2 className="text-xl font-bold text-white">Edit Reminder</h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors cursor-pointer"
+            className="text-white/70 hover:text-white transition-colors cursor-pointer"
           >
             <X className="h-6 w-6" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div className="bg-gray-50 p-3 rounded-lg">
-            <p className="text-sm text-gray-600 mb-1">Application</p>
-            <p className="font-semibold text-gray-900">{reminder.application.position_title}</p>
-            <p className="text-sm text-gray-600">{reminder.application.company.company_name}</p>
+        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+          <div className="bg-white/10 border border-white/20 p-4 rounded-lg">
+            <p className="text-sm text-white/70 mb-1">Application</p>
+            <p className="font-semibold text-white text-lg">{reminder.application.position_title}</p>
+            <p className="text-sm text-white/80 mt-1">{reminder.application.company.company_name}</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-white mb-2">
               Date & Time *
             </label>
             <input
@@ -91,15 +91,18 @@ export function EditReminderModal({ isOpen, onClose, onSubmit, reminder, applica
               min={getCurrentDateTime()} 
               value={formData.reminder_at}
               onChange={(e) => setFormData({ ...formData, reminder_at: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer"
+              className="w-full px-3 py-2.5 bg-white/10 border border-white/20 text-white rounded-lg focus:ring-2 focus:ring-white/50 focus:border-white/50 cursor-pointer transition-all hover:bg-white/15"
+              style={{
+                colorScheme: 'dark'
+              }}
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-white/60 mt-1.5">
               Select a future time (minimum 5 minutes from now)
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-white mb-2">
               Message (Optional)
             </label>
             <textarea
@@ -107,21 +110,14 @@ export function EditReminderModal({ isOpen, onClose, onSubmit, reminder, applica
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
               rows={3}
               placeholder="Add a note for this reminder..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none cursor-text"
+              className="w-full px-3 py-2.5 bg-white/10 border border-white/20 text-white placeholder-white/40 rounded-lg focus:ring-2 focus:ring-white/50 focus:border-white/50 resize-none cursor-text transition-all hover:bg-white/15"
             />
           </div>
 
-          <div className="flex gap-3 pt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium cursor-pointer"
-            >
-              Cancel
-            </button>
+          <div className="flex justify-end pt-2">
             <button
               type="submit"
-              className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium cursor-pointer"
+              className="px-6 py-2.5 bg-white text-[#1A2539] rounded-lg hover:bg-white/90 transition-all font-medium cursor-pointer shadow-lg"
             >
               Update Reminder
             </button>

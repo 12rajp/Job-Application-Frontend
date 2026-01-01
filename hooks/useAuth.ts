@@ -92,25 +92,25 @@ export function useAuth() {
   };
 
   const logout = async () => {
-    setLoading(true);
-    
-    try {
-      await fetch(`${API_URL}/users/logout`, {
-        method: 'POST',
-        credentials: 'include',
-      });
-    } catch (err) {
-      console.error('Logout API error:', err);
-    }
-    
-    document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
-    document.cookie = 'token=; path=/; max-age=0; SameSite=Lax';
-    
-    toast.success('Logged out successfully');
-    
-    setLoading(false);
-    window.location.href = '/login';
-  };
+  setLoading(true);
+
+  try {
+    await fetch(`${API_URL}/users/logout`, {
+      method: 'POST',
+      credentials: 'include',
+    });
+  } catch (err) {
+    console.error('Logout API error:', err);
+  }
+
+  document.cookie = 'token=; path=/; max-age=0; SameSite=Lax';
+
+  toast.success('Logged out successfully');
+
+  setLoading(false);
+  router.replace('/login'); 
+};
 
   return { login, signup, logout, loading };
 }
+ 

@@ -47,25 +47,25 @@ export function AddReminderModal({ isOpen, onClose, onSubmit, applications }: Ad
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-transparent z-50 flex items-center justify-center p-4"> 
-      <div className="bg-white rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
-          <h2 className="text-xl font-bold text-gray-900">Add Reminder</h2>
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"> 
+      <div className="bg-[#1A2539] rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl">
+        <div className="sticky top-0 bg-[#1A2539] border-b border-white/10 px-6 py-4 flex justify-between items-center">
+          <h2 className="text-xl font-bold text-white">Add Reminder</h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors cursor-pointer"
+            className="text-white/70 hover:text-white transition-colors cursor-pointer"
           >
-            <X className="h-6 w-6" />
+            <X className="h-6 w-6 cursor-pointer" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-6 space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-white mb-2">
               Application *
             </label>
             {applications.length === 0 ? (
-              <div className="w-full px-3 py-2 border border-yellow-300 bg-yellow-50 rounded-lg text-sm text-yellow-800">
+              <div className="w-full px-3 py-2 border border-yellow-400/30 bg-yellow-500/10 rounded-lg text-sm text-yellow-300">
                 No applications found. Please add an application first.
               </div>
             ) : (
@@ -73,20 +73,22 @@ export function AddReminderModal({ isOpen, onClose, onSubmit, applications }: Ad
                 required
                 value={formData.app_id}
                 onChange={(e) => setFormData({ ...formData, app_id: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer"
+                className="w-full px-3 py-2.5 bg-white/10 border border-white/20 text-white rounded-lg focus:ring-2 focus:ring-white/50 focus:border-white/50 cursor-pointer transition-all hover:bg-white/15"
+                style={{
+                  colorScheme: 'dark'
+                }}
               >
-                <option value="">Select an application</option>
+                <option value="" className="bg-[#1A2539] text-white">Select an application</option>
                 {applications.map((app) => (
-                  <option key={app.app_id} value={app.app_id}>
+                  <option key={app.app_id} value={app.app_id} className="bg-[#1A2539] text-white">
                     {app.position_title} - {app.company.company_name}
                   </option>
                 ))}
               </select>
             )}
           </div>
-
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-white mb-2">
               Date & Time *
             </label>
             <input
@@ -95,15 +97,18 @@ export function AddReminderModal({ isOpen, onClose, onSubmit, applications }: Ad
               min={getCurrentDateTime()} 
               value={formData.reminder_at}
               onChange={(e) => setFormData({ ...formData, reminder_at: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer"
+              className="w-full px-3 py-2.5 bg-white/10 border border-white/20 text-white rounded-lg focus:ring-2 focus:ring-white/50 focus:border-white/50 cursor-pointer transition-all hover:bg-white/15"
+              style={{
+                colorScheme: 'dark'
+              }}
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-white/60 mt-1.5">
               Minimum 5 minutes from now
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-white mb-2">
               Message (Optional)
             </label>
             <textarea
@@ -111,21 +116,14 @@ export function AddReminderModal({ isOpen, onClose, onSubmit, applications }: Ad
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
               rows={3}
               placeholder="Add a note for this reminder..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none cursor-text"
+              className="w-full px-3 py-2.5 bg-white/10 border border-white/20 text-white placeholder-white/40 rounded-lg focus:ring-2 focus:ring-white/50 focus:border-white/50 resize-none cursor-text transition-all hover:bg-white/15"
             />
           </div>
 
-          <div className="flex gap-3 pt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium cursor-pointer"
-            >
-              Cancel
-            </button>
+          <div className="flex justify-end pt-2">
             <button
               type="submit"
-              className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium cursor-pointer"
+              className="px-6 py-2.5 bg-white text-[#1A2539] rounded-lg hover:bg-white/90 transition-all font-medium cursor-pointer shadow-lg"
             >
               Add Reminder
             </button>

@@ -80,7 +80,7 @@ export default function ForgotPasswordPage() {
                 </Field>
 
                 <Field>
-                  <Button type="submit" disabled={loading} className="w-full">
+                  <Button type="submit" disabled={loading} className="w-full cursor-pointer">
                     {loading ? "Sending..." : "Send reset link"}
                   </Button>
                 </Field>

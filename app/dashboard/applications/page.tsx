@@ -133,13 +133,13 @@ export default function AllApplicationsPage() {
           )}
           
           <Link href="/dashboard/add-application" className="w-full sm:w-auto shrink-0">
-            <Button className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 flex items-center gap-2 justify-center whitespace-nowrap">
+            <Button className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 flex items-center gap-2 justify-center whitespace-nowrap cursor-pointer">
               <Plus className="w-4 h-4" /> Add New Application
             </Button>
           </Link>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="hidden lg:block overflow-x-auto">
           <table className="w-full border-collapse">
             <thead className="bg-gray-100">
               <tr>
@@ -185,7 +185,7 @@ export default function AllApplicationsPage() {
                     <td className="p-4 text-center">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button className="p-2 rounded hover:bg-gray-100">
+                          <button className="p-2 rounded hover:bg-gray-100 cursor-pointer">
                             <MoreVertical className="w-4 h-4 text-gray-600" />
                           </button>
                         </DropdownMenuTrigger>
@@ -222,6 +222,81 @@ export default function AllApplicationsPage() {
               )}
             </tbody>
           </table>
+        </div>
+        <div className="lg:hidden space-y-4">
+          {displayApplications.length === 0 ? (
+            <div className="text-center p-8 text-gray-500 bg-white rounded-lg border">
+              {applications.length === 0
+                ? 'No applications found. Click "Add New Application" to create your first application!'
+                : "No applications match your search criteria. Try adjusting your filters."}
+            </div>
+          ) : (
+            displayApplications.map((app) => (
+              <div
+                key={app.app_id}
+                className="bg-white rounded-lg border p-4 shadow-sm hover:shadow-md transition-shadow"
+              >
+                <div className="flex justify-between items-start mb-3">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-lg text-gray-800">
+                      {getCompanyName(app.company_id)}
+                    </h3>
+                    <p className="text-gray-600 mt-1">{app.position_title}</p>
+                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="p-2 rounded hover:bg-gray-100 cursor-pointer">
+                        <MoreVertical className="w-4 h-4 text-gray-600" />
+                      </button>
+                    </DropdownMenuTrigger>
+
+                    <DropdownMenuContent align="end" className="w-40">
+                      <DropdownMenuItem
+                        onClick={() => handleView(app)}
+                        className="flex gap-2 cursor-pointer"
+                      >
+                        <Eye className="w-4 h-4" />
+                        View
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem
+                        onClick={() => handleEdit(app)}
+                        className="flex gap-2 cursor-pointer"
+                      >
+                        <Pencil className="w-4 h-4" />
+                        Edit
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem
+                        onClick={() => handleDelete(app.app_id)}
+                        className="flex gap-2 text-red-600 cursor-pointer focus:text-red-600"
+                      >
+                        <Trash className="w-4 h-4" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+
+                <div className="flex items-center justify-between mt-3 pt-4 border-t">
+                  <div className="text-sm text-gray-500">
+                    {new Date(app.date_applied).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </div>
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
+                      getStatusName(app.status_id)
+                    )}`}
+                  >
+                    {getStatusName(app.status_id)}
+                  </span>
+                </div>
+              </div>
+            ))
+          )}
         </div>
 
         {!isFiltering && pagination.totalPages > 1 && (

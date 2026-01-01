@@ -7,9 +7,21 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus } from "lucide-react";
 import type { Skill } from "@/types/type";
-import { Command, CommandGroup, CommandInput, CommandItem, CommandList, CommandEmpty } from "@/components/ui/command";
+import {
+  Command,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandEmpty,
+} from "@/components/ui/command";
 import { MoreVertical, Pencil, Trash } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import axios from "axios";
 import { API_URL } from "@/lib/constants";
 
@@ -67,23 +79,25 @@ export default function SkillsSection({
 
     setSearching(true);
     const token = getToken();
-    
+
     try {
       const response = await axios.get(
-        `${API_URL}/skills?page=1&limit=10&search=${encodeURIComponent(searchTerm)}`,
+        `${API_URL}/skills?page=1&limit=10&search=${encodeURIComponent(
+          searchTerm
+        )}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
 
-      console.log("Search response:", response.data); 
+      console.log("Search response:", response.data);
 
       const skillsData = response.data.data || response.data.skills || [];
-      console.log("Skills data:", skillsData); 
-      
+      console.log("Skills data:", skillsData);
+
       const skillNames = skillsData.map((s: any) => s.skill_name);
-      console.log("Skill names:", skillNames); 
-      
+      console.log("Skill names:", skillNames);
+
       if (skillNames.length > 0) {
         setSearchResults(skillNames);
       } else {
@@ -157,7 +171,9 @@ export default function SkillsSection({
                 />
                 <CommandList>
                   <CommandEmpty>
-                    {searching ? "Searching..." : "No skills found. You can type and add a new skill!"}
+                    {searching
+                      ? "Searching..."
+                      : "No skills found. You can type and add a new skill!"}
                   </CommandEmpty>
                   <CommandGroup>
                     {searchResults.map((skill, idx) => (
@@ -219,13 +235,12 @@ export default function SkillsSection({
             </div>
           </div>
         )}
-
         {loadingSkills ? (
           <p className="text-gray-500">Loading skills...</p>
         ) : skills.length === 0 ? (
           <p className="text-gray-500">No skills added yet</p>
         ) : (
-          <div className="space-y-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
             {skills.map((skill) => (
               <div
                 key={skill.id}
