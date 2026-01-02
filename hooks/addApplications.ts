@@ -57,7 +57,7 @@ export const useAddApplication = () => {
       setDocuments([]);
     }
   };
-
+  
   const addApplication = async (
     form: ApplicationForm,
     selectedDocId?: string,
@@ -72,7 +72,15 @@ export const useAddApplication = () => {
 
     try {
       const formData = new FormData();
-      formData.append("company_id", String(form.company_id));
+      
+      formData.append("company_name", form.company_name);
+      if (form.company_id !== null && form.company_id !== undefined && form.company_id !== "") {
+        formData.append("company_id", String(form.company_id));
+        console.log("Sending existing company_id:", form.company_id);
+      } else {
+        console.log("Creating new company:", form.company_name);
+      }
+      
       formData.append("status_id", String(form.status_id));
       formData.append("position_title", form.position_title);
       formData.append("job_type", form.job_type);
@@ -90,6 +98,11 @@ export const useAddApplication = () => {
         formData.append("file", newFile);
       }
 
+      console.log("Sending form data:");
+      for (let pair of formData.entries()) {
+        console.log(pair[0] + ': ' + pair[1]);
+      }
+
       const response = await axios.post(
         `${API_URL}/job-applications`,
         formData,
@@ -101,10 +114,12 @@ export const useAddApplication = () => {
         }
       );
       
+      console.log("Application created:", response.data);
       alert("Application submitted successfully!");
       return true;
     } catch (error: any) {
       console.error("Error adding application", error);
+      console.error("Error response:", error.response?.data);
       const errorMessage = error.response?.data?.message || "Failed to submit application";
       alert(errorMessage);
       return false;

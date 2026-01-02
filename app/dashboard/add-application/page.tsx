@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useAddApplication } from "@/hooks/addApplications";
 import { useRouter } from "next/navigation";
-import { Upload, FileText } from "lucide-react";
+import { Upload, FileText, ChevronDown } from "lucide-react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
@@ -23,7 +23,7 @@ const getCurrentDate = () => {
 };
 
 const validationSchema = Yup.object({
-  company_id: Yup.string().required("Please select a company"),
+  company_name: Yup.string().required("Company name is required"),
   status_id: Yup.string().required("Please select a status"),
   position_title: Yup.string().required("Position title is required"),
   job_type: Yup.string().required("Please select job type"),
@@ -42,10 +42,13 @@ export default function AddApplicationPage() {
   const [selectedDocId, setSelectedDocId] = useState<string>("");
   const [newFile, setNewFile] = useState<File | null>(null);
   const [uploadMode, setUploadMode] = useState<"existing" | "new">("existing");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [filteredCompanies, setFilteredCompanies] = useState(companies);
 
   const formik = useFormik({
     initialValues: {
-      company_id: "",
+      company_name: "",
+      company_id: null,
       status_id: "",
       position_title: "",
       job_description: "",
@@ -64,7 +67,12 @@ export default function AddApplicationPage() {
         newFile: newFile?.name,
       });
 
-      const success = await addApplication(values, selectedDocId, newFile);
+      const success = await addApplication(
+        values, 
+        selectedDocId, 
+        newFile
+      );
+      
       if (success) {
         console.log("Application submitted successfully, redirecting...");
         setTimeout(() => {
@@ -74,6 +82,29 @@ export default function AddApplicationPage() {
       }
     },
   });
+
+
+const handleCompanyInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const value = e.target.value;
+  formik.setFieldValue("company_name", value);
+  formik.setFieldValue("company_id", null); 
+  if (value.trim()) {
+    const filtered = companies.filter((c) =>
+      c.company_name.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredCompanies(filtered);
+    setShowDropdown(true);
+  } else {
+    setFilteredCompanies(companies);
+    setShowDropdown(false);
+  }
+};
+
+const handleCompanySelect = (companyId: number, companyName: string) => {
+  formik.setFieldValue("company_name", companyName);
+  formik.setFieldValue("company_id", companyId);
+  setShowDropdown(false);
+};
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -96,24 +127,52 @@ export default function AddApplicationPage() {
 
       <form onSubmit={formik.handleSubmit}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <Label className="mb-2 block">Company</Label>
-            <select
-              name="company_id"
-              value={formik.values.company_id}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className={`w-full border rounded px-3 py-2 ${focusStyle}`}
-            >
-              <option value="">Select Company</option>
-              {companies.map((c) => (
-                <option key={c.company_id} value={c.company_id}>
-                  {c.company_name}
-                </option>
-              ))}
-            </select>
-            {formik.touched.company_id && formik.errors.company_id && (
-              <p className="text-red-600 text-sm mt-1">{formik.errors.company_id}</p>
+          <div className="relative">
+            <Label className="mb-2 block">Company Name</Label>
+            <div className="relative">
+              <Input
+                name="company_name"
+                value={formik.values.company_name}
+                onChange={handleCompanyInputChange}
+                onFocus={() => setShowDropdown(true)}
+                onBlur={() => {
+                  setTimeout(() => setShowDropdown(false), 200);
+                }}
+                placeholder="Type or select company"
+                className={`${focusStyle} pr-10`}
+              />
+              <ChevronDown 
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+              />
+              
+              {showDropdown && (
+                <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+                  {filteredCompanies.length > 0 ? (
+                    filteredCompanies.map((company) => (
+                      <div
+                        key={company.company_id}
+                        onClick={() => handleCompanySelect(company.company_id, company.company_name)}
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                      >
+                        <div className="font-medium">{company.company_name}</div>
+                        {company.industry && (
+                          <div className="text-xs text-gray-500">{company.industry}</div>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="px-4 py-3 text-sm text-gray-500 text-center">
+                      No companies found. Type to add new company.
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+            {formik.touched.company_name && formik.errors.company_name && (
+              <p className="text-red-600 text-sm mt-1">{formik.errors.company_name}</p>
+            )}
+            {formik.values.company_name && !formik.values.company_id && (
+              <p className="text-green-600 text-xs mt-1">✓ New company will be created</p>
             )}
           </div>
 

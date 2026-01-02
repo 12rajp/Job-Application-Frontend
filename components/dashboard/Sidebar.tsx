@@ -67,12 +67,6 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
             active={pathname === "/dashboard/reminders"} 
           />
           <SidebarItem 
-            icon={PieChart} 
-            label="Analytics" 
-            href="/dashboard/analytics" 
-            active={pathname === "/dashboard/analytics"} 
-          />
-          <SidebarItem 
             icon={User} 
             label="Profile" 
             href="/dashboard/profile" 

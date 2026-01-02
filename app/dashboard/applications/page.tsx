@@ -41,11 +41,12 @@ export default function AllApplicationsPage() {
     }
   }, [applications, isFiltering]);
 
-  const getCompanyName = (companyId: number) =>
-    companies.find((c) => c.company_id === companyId)?.company_name || "Null";
+  const getCompanyName = (app: Application) => {
+    return app.company?.company_name || "Unknown Company";
+  };
 
   const getStatusName = (statusId: number) =>
-    statuses.find((s) => s.status_id === statusId)?.status_name || "Null";
+    statuses.find((s) => s.status_id === statusId)?.status_name || "Unknown";
 
   const getStatusColor = (statusName: string) => {
     const colors: any = {
@@ -162,9 +163,7 @@ export default function AllApplicationsPage() {
               ) : (
                 displayApplications.map((app) => (
                   <tr key={app.app_id} className="border-b hover:bg-gray-50">
-                    <td className="p-4 font-medium">
-                      {getCompanyName(app.company_id)}
-                    </td>
+                    <td className="p-4 font-medium">{getCompanyName(app)}</td>
                     <td className="p-4">{app.position_title}</td>
                     <td className="p-4">
                       {new Date(app.date_applied).toLocaleDateString("en-US", {
@@ -223,6 +222,7 @@ export default function AllApplicationsPage() {
             </tbody>
           </table>
         </div>
+
         <div className="lg:hidden space-y-4">
           {displayApplications.length === 0 ? (
             <div className="text-center p-8 text-gray-500 bg-white rounded-lg border">
@@ -239,7 +239,7 @@ export default function AllApplicationsPage() {
                 <div className="flex justify-between items-start mb-3">
                   <div className="flex-1">
                     <h3 className="font-semibold text-lg text-gray-800">
-                      {getCompanyName(app.company_id)}
+                      {getCompanyName(app)}
                     </h3>
                     <p className="text-gray-600 mt-1">{app.position_title}</p>
                   </div>
@@ -325,7 +325,7 @@ export default function AllApplicationsPage() {
                 <div>
                   <Label className="font-semibold">Company</Label>
                   <p className="text-gray-700">
-                    {getCompanyName(selectedApp.company_id)}
+                    {selectedApp.company?.company_name || "Unknown"}
                   </p>
                 </div>
                 <div>
@@ -341,13 +341,13 @@ export default function AllApplicationsPage() {
                 <div>
                   <Label className="font-semibold">Job Type</Label>
                   <p className="text-gray-700">
-                    {selectedApp.job_type || "Null"}
+                    {selectedApp.job_type || "N/A"}
                   </p>
                 </div>
                 <div>
                   <Label className="font-semibold">Location</Label>
                   <p className="text-gray-700">
-                    {selectedApp.location || "Null"}
+                    {selectedApp.location || "N/A"}
                   </p>
                 </div>
                 <div>
@@ -363,13 +363,13 @@ export default function AllApplicationsPage() {
                       ? new Date(
                           selectedApp.application_deadline
                         ).toLocaleDateString()
-                      : "Null"}
+                      : "N/A"}
                   </p>
                 </div>
                 <div>
                   <Label className="font-semibold">Salary</Label>
                   <p className="text-gray-700">
-                    {selectedApp.salary_offered || "Null"}
+                    {selectedApp.salary_offered || "N/A"}
                   </p>
                 </div>
               </div>

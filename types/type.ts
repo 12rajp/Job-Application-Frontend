@@ -1,4 +1,5 @@
 export interface Application {
+  job_title: string;
   app_id: number;
   position_title: string;
   company_id: number;
@@ -14,6 +15,7 @@ export interface Application {
 }
 
 export interface Company {
+  industry: any;
   company_id: number;
   company_name: string;
 }
@@ -24,6 +26,7 @@ export interface Status {
 }
 
 export interface ApplicationForm {
+  company_name(arg0: string, company_name: any): unknown;
   company_id: string;
   status_id: string;
   position_title: string;
@@ -119,11 +122,13 @@ export interface Application {
   app_id: number;
   position_title: string;
   company: {
+    name: string;
     company_name: string;
   };
 }
 
 export interface Reminder {
+  status: any;
   rem_id: number;
   app_id: number;
   reminder_at: string;
